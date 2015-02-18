@@ -98,5 +98,5 @@ sed -i 's/selinux\"/selinux btrfs_noversion\"/' docker-master.spec
 # build for el7
 rpmbuild --define 'dist .el7' -ba docker-master.spec --nocheck
 
-# send to CBS
+# send to CBS (ckbuild = koji build virt7-el7)
 ckbuild SRPMS/docker-master-*.el7.src.rpm
