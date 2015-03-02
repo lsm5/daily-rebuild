@@ -122,5 +122,5 @@ sed -i 's/selinux\"/selinux btrfs_noversion\"/' docker-master.spec
 # build for el7
 rpmbuild --define 'dist .el7' -ba docker-master.spec --nocheck
 
-# send to CBS (ckbuild = koji build virt7-el7)
+# ckoji is a symlink to koji which uses my CentOS koji config
 ~/bin/ckoji build virt7-el7 SRPMS/docker-master-*.el7.src.rpm
