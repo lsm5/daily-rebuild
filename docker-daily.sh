@@ -13,12 +13,41 @@ git pull
 # enter docker dir
 cd ~/repositories/github.com/docker/docker
 
-# checkout master branch
-git checkout master
+# fetch the latest from docker upstream
+git fetch origin
 
-# update master branch from remote
-git pull
+# fetch the latest redhat patches from @rhatdan remote
+git fetch rhatdan
 
+# checkout @rhatdan/fedora
+git checkout rhatdan/fedora
+
+# rebase @rhatdan/fedora on origin/master
+git rebase master
+
+# if rebase fails, email patch author with output of 'git diff'
+# abort the rebase and exit
+if [ $? -eq 1 ]
+then
+    export FAILED_PATCH_AUTHOR=$(head -2 .git/rebase-apply/author-script \
+        | tail -1 | sed -e "s/GIT_AUTHOR_EMAIL='//" -e "s/'//")
+    git diff > /tmp/failed-rebase.txt
+    echo 'Emailing author of failed patch...'
+    mutt -F ~/.rmail-muttrc -s 'Daily rebase: Failed' $FAILED_PATCH_AUTHOR < \
+        /tmp/failed-rebase.txt
+    git rebase --abort
+    echo 'Exiting...'
+    exit
+fi
+
+# delete old fedora branch
+git branch -D fedora
+
+# create new 'fedora' branch from rebased branch
+git checkout -b fedora
+
+# force push new fedora to @lsm5 remote
+git push -u github fedora -f
 
 # export commit and version values
 export GITCOMMIT=$(git show --pretty=%H)
@@ -27,13 +56,12 @@ export VERSION=$(sed -e 's/-.*//' VERSION)
 
 cd ~/repositories/pkgs/fedora/docker-io
 
-# if existing version in spec file is not equal to latest version, set
-# release tag value 0
+# get current version in rpm
 export CURRENT_VERSION=$(cat docker-io.spec | grep "Version:" | \
     sed -e "s/Version:\t//")
 
 # update spec files with latest values
-sed -i "s/\%global commit.*/\%global commit\t\t$GITCOMMIT/" docker-io.spec
+sed -i "s/\%global commit.*/\%global commit $GITCOMMIT/" docker-io.spec
 
 # fetch docker master branch tarball
 spectool -g docker-io.spec
