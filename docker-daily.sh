@@ -33,8 +33,8 @@ then
         | tail -1 | sed -e "s/GIT_AUTHOR_EMAIL='//" -e "s/'//")
     git diff > /tmp/failed-rebase.txt
     echo 'Emailing author of failed patch...'
-    mutt -F ~/.rmail-muttrc -s 'Daily rebase: Failed' $FAILED_PATCH_AUTHOR < \
-        /tmp/failed-rebase.txt
+    mutt -F ~/.rmail-muttrc -s 'Daily rebase: Failed' $FAILED_PATCH_AUTHOR \
+        -c appinfra-docker-team@redhat.com < /tmp/failed-rebase.txt
     git rebase --abort
     echo 'Exiting...'
     exit
