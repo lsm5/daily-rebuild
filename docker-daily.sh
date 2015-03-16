@@ -50,7 +50,7 @@ git checkout -b fedora
 git push -u github fedora -f
 
 # export commit and version values
-export GITCOMMIT=$(git show --pretty=%H)
+export GITCOMMIT=$(git show --pretty=%H -s)
 export SHORTCOMMIT=$(c=$GITCOMMIT; echo ${c:0:7})
 export VERSION=$(sed -e 's/-.*//' VERSION)
 
