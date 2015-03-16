@@ -145,7 +145,7 @@ cp docker-io.spec docker-master.spec
 sed -i "s/\%{repo}-io/docker-master/" docker-master.spec
 
 # modify build tags for el7
-sed -i 's/selinux\"/selinux btrfs_noversion\"/' docker-master.spec
+#sed -i 's/selinux\"/selinux btrfs_noversion\"/' docker-master.spec
 
 # build for el7
 rpmbuild --define 'dist .el7' -ba docker-master.spec --nocheck
