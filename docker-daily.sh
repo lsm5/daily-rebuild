@@ -61,7 +61,7 @@ export CURRENT_VERSION=$(cat docker-io.spec | grep "Version:" | \
     sed -e "s/Version:\t//")
 
 # update spec files with latest values
-sed -i "s/\%global commit.*/\%global commit $GITCOMMIT/" docker-io.spec
+sed -i "s/\%global commit.*/\%global commit\t\t$GITCOMMIT/" docker-io.spec
 
 # fetch docker master branch tarball
 spectool -g docker-io.spec
