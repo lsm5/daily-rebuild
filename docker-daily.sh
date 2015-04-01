@@ -129,6 +129,9 @@ git push -u github master
 # push changes to dist-git master
 git push -u origin master
 
+# sleep 10 seconds to let koji recognize the latest NVR
+sleep 10
+
 # build package in koji
 fedpkg build
 
