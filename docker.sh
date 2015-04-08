@@ -33,10 +33,10 @@ then
         | tail -1 | sed -e "s/GIT_AUTHOR_EMAIL='//" -e "s/'//")
     git diff > /tmp/failed-rebase.txt
     echo 'Emailing author of failed patch...'
-    mutt -F ~/.rmail-muttrc -s 'Daily rebase: Failed' $FAILED_PATCH_AUTHOR \
+    mutt -F ~/.rmail-muttrc -s 'Daily rebuild: rebase FAIL!' $FAILED_PATCH_AUTHOR \
         -c appinfra-docker-team@redhat.com < /tmp/failed-rebase.txt
     git rebase --abort
-    echo 'Exiting...'
+    echo 'Exiting after failed rebase...'
     exit
 fi
 
@@ -82,7 +82,19 @@ export RELEASE=$(cat docker.spec | grep "Release:" | \
     sed -e "s/Release: //")
 
 # build rpm without running check
-rpmbuild -ba docker.spec --nocheck
+rpmbuild -ba docker.spec --nocheck 2> /tmp/rpmbuild.log
+
+# if rpmbuild fails, email team with last 10 lines of rpmbuild error and
+# exit, proceed if rpmbuild successful
+if [ $? -eq 1 ]
+then
+    tail -n 10 /tmp/rpmbuild.log > /tmp/rpmbuild.txt
+    mutt -F ~/.rmail-muttrc -s 'Daily rebuild: rpmbuild FAIL!' \
+        appinfra-docker-team@redhat.com < /tmp/rpmbuild.txt
+    git reset --hard
+    echo 'Exiting after failed rpmbuild...'
+    exit
+fi
 
 pushd BUILD/docker-$GITCOMMIT
 rm -rf vendor
