@@ -67,7 +67,7 @@ sed -i "s/\%global d_commit.*/\%global d_commit $GITCOMMIT/" docker.spec
 spectool -g docker.spec
 
 # install deps
-sudo yum-builddep -y docker.spec
+sudo dnf builddep -y docker.spec
 
 # update spec changelog and release value
 if [ "$CURRENT_VERSION" == "$VERSION" ]; then
