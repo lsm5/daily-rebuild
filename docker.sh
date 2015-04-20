@@ -20,7 +20,7 @@ git fetch origin
 git fetch rhatdan
 
 # checkout @rhatdan/fedora
-git checkout rhatdan/fedora
+git checkout rhatdan/fedora-1.7
 
 # rebase @rhatdan/fedora on origin/master
 git rebase origin/master
@@ -41,13 +41,13 @@ then
 fi
 
 # delete old fedora branch
-git branch -D fedora
+git branch -D fedora-1.7
 
 # create new 'fedora' branch from rebased branch
-git checkout -b fedora
+git checkout -b fedora-1.7
 
 # force push new fedora to @lsm5 remote
-git push -u github fedora -f
+git push -u github fedora-1.7 -f
 
 # export commit and version values
 export GITCOMMIT=$(git show --pretty=%H -s)
@@ -103,7 +103,7 @@ rm -rf vendor
 # for each golang path, if it exists in spec file, continue
 # else, add the golang path just below the Summary: line
 # (skip vendor/ paths)
-for line in $(go2fed inspect -p)
+for line in $(gofed inspect -p)
 do
     if grep -Fxq "Provides: golang(%{import_path}/$line) = %{version}-%{release}" \
         ~/repositories/pkgs/fedora/docker/docker.spec
