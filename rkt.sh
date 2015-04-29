@@ -44,7 +44,7 @@ if [ "$CURRENT_VERSION" == "$VERSION" ]; then
 else
     rpmdev-bumpspec -n $VERSION -c "New version: $VERSION, built rkt \
         commit#$SHORTCOMMIT" rkt.spec
-    sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{d_shortcommit}\%{?dist}/" rkt.spec
+    sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit}\%{?dist}/" rkt.spec
 fi
 
 export RELEASE=$(cat rkt.spec | grep "Release:" | \
