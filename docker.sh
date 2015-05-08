@@ -160,6 +160,10 @@ cp docker.spec docker-master.spec
 # change package name for docker-master
 sed -i "s/Name: \%{repo}/Name: \%{repo}-master/" docker-master.spec
 
+# docker-master Provides: docker
+sed -i "/Name: %{repo}-master/a Provides: %{repo} = %{version}-%{release}" \
+    docker-master.spec
+
 # modify build tags for el7
 sed -i 's/selinux\"/selinux btrfs_noversion\"/' docker-master.spec
 
