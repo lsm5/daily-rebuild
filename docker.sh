@@ -128,9 +128,7 @@ git reset --hard
 fedpkg import --skip-diffs SRPMS/docker-$VERSION-*.src.rpm
 
 # get NVR
-pushd SRPMS
-export NVR=$(ls | sed -e "s/\.fc.*//")
-popd
+export NVR=$(ls SRPMS | sed -e "s/\.fc.*//")
 
 # commit changes after importing
 git commit -asm "NVR: $NVR"
@@ -172,3 +170,4 @@ rpmbuild --define 'dist .el7' -ba docker-master.spec --nocheck
 
 # ckoji is a symlink to koji which uses my CentOS koji config
 ~/bin/ckoji build virt7-el7 SRPMS/docker-master-*.el7.src.rpm
+~/bin/ckoji tag-pkg virt7-docker-master-testing $(ls SRPMS | sed -e "s/\.src.*//")
