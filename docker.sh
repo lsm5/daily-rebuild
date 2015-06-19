@@ -20,7 +20,7 @@ git fetch origin
 git fetch rhatdan
 
 # checkout @rhatdan/fedora
-git checkout rhatdan/fedora-1.7
+git checkout rhatdan/fedora-1.8
 
 # rebase @rhatdan/fedora on origin/master
 git rebase origin/master
@@ -41,13 +41,13 @@ then
 fi
 
 # delete old fedora branch
-git branch -D fedora-1.7
+git branch -D fedora-1.8
 
 # create new 'fedora' branch from rebased branch
-git checkout -b fedora-1.7
+git checkout -b fedora-1.8
 
 # force push new fedora to @lsm5 remote
-git push -u github fedora-1.7 -f
+git push -u github fedora-1.8 -f
 
 # export commit and version values
 export GITCOMMIT=$(git show --pretty=%H -s)
