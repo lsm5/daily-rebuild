@@ -10,19 +10,11 @@ rm -rf *.tar.gz RPMS SRPMS BUILD*
 git checkout master
 git pull
 
-# enter docker dir
+# fetch docker sources from upstream and rhatdan
 cd ~/repositories/github.com/docker/docker
-
-# fetch the latest from docker upstream
 git fetch origin
-
-# fetch the latest redhat patches from @rhatdan remote
 git fetch rhatdan
-
-# checkout @rhatdan/fedora
 git checkout rhatdan/fedora-1.8
-
-# rebase @rhatdan/fedora on origin/master
 git rebase origin/master
 
 # if rebase fails, email patch author with output of 'git diff'
@@ -47,12 +39,23 @@ git branch -D fedora-1.8
 git checkout -b fedora-1.8
 
 # force push new fedora to @lsm5 remote
-git push -u github fedora-1.8 -f
+git push -u lsm5 fedora-1.8 -f
 
 # export commit and version values
-export GITCOMMIT=$(git show --pretty=%H -s)
-export SHORTCOMMIT=$(c=$GITCOMMIT; echo ${c:0:7})
+export D_COMMIT=$(git show --pretty=%H -s)
+export D_SHORTCOMMIT=$(c=$D_COMMIT; echo ${c:0:7})
 export VERSION=$(sed -e 's/-.*//' VERSION)
+
+# fetch docker-selinux and docker-storage-setup info
+cd ~/repositories/github.com/fedora-cloud/docker-selinux
+git fetch origin
+export DS_COMMIT=$(git log origin/master -1 --pretty=%H -s)
+export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
+
+cd ~/repositories/github.com/projectatomic/docker-storage-setup
+git fetch origin
+export DSS_COMMIT=$(git log origin/master -1 --pretty=%H -s)
+export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
 
 cd ~/repositories/pkgs/fedora/docker
 
@@ -61,7 +64,9 @@ export CURRENT_VERSION=$(cat docker.spec | grep "Version:" | \
     sed -e "s/Version: //")
 
 # update spec files with latest values
-sed -i "s/\%global d_commit.*/\%global d_commit $GITCOMMIT/" docker.spec
+sed -i "s/\%global d_commit.*/\%global d_commit $D_COMMIT/" docker.spec
+sed -i "s/\%global ds_commit.*/\%global ds_commit $DS_COMMIT/" docker.spec
+sed -i "s/\%global dss_commit.*/\%global dss_commit $DSS_COMMIT/" docker.spec
 
 # fetch docker master branch tarball
 spectool -g docker.spec
@@ -71,10 +76,10 @@ sudo dnf builddep -y docker.spec
 
 # update spec changelog and release value
 if [ "$CURRENT_VERSION" == "$VERSION" ]; then
-    rpmdev-bumpspec -c "built docker @lsm5/fedora commit#$SHORTCOMMIT"  docker.spec
+    rpmdev-bumpspec -c "built docker @lsm5/fedora commit#$D_SHORTCOMMIT"  docker.spec
 else
     rpmdev-bumpspec -n $VERSION -c "New version: $VERSION, built docker \
-        @lsm5/commit#$SHORTCOMMIT" docker.spec
+        @lsm5/commit#$D_SHORTCOMMIT" docker.spec
     sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{d_shortcommit}\%{?dist}/" docker.spec
 fi
 
@@ -96,7 +101,7 @@ then
     exit
 fi
 
-pushd BUILD/docker-$GITCOMMIT
+pushd BUILD/docker-$D_COMMIT
 rm -rf vendor
 
 # print all golang paths
