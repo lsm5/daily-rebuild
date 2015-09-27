@@ -1,10 +1,14 @@
 #!/bin/sh
 
-export REPO_DIR=~/repositories/github.com
+export REPO_DIR=~/repositories
 export PKG_DIR=~/repositories/pkgs
 
-while getopts ":d:b:k:" opt; do
+while getopts ":p:d:b:k:" opt; do
     case $opt in
+        p)
+            export PACKAGE=$OPTARG
+            echo "You chose package: $PACKAGE"
+            ;;
         d)
             export DISTRO=$OPTARG
             echo "You chose distro: $DISTRO"

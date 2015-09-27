@@ -5,109 +5,50 @@
 # delete stale packages, tarballs and build dirs
 cleanup_stale ()
 {
-    pushd $PKG_DIR/docker
+    pushd $PKG_DIR/$PACKAGE
     rm -rf *.tar.gz RPMS SRPMS BUILD*
     popd
 }
 
-# update sources
-update_sources ()
+# update sources & spec from $PACKAGE.sh file
+
+# rpmbuild
+fetch_and_build ()
 {
-    pushd $REPO_DIR/docker/docker
-    git fetch origin
-    git fetch rhatdan
-    popd
-
-    pushd $REPO_DIR/projectatomic/docker-storage-setup
-    git fetch origin
-    popd
-
-    pushd $REPO_DIR/fedora-cloud/docker-selinux
-    git fetch origin
-    popd
-
-    pushd $REPO_DIR/vbatts/docker-utils
-    git fetch origin
-    popd
-}
-
-# conditional rebase if rawhide
-
-# fetch commit values
-fetch_commit ()
-{
-    pushd $REPO_DIR/docker/docker
-    git checkout $BRANCH
-    echo "Checked out branch: " $BRANCH
-    export D_COMMIT=$(git show --pretty=%H -s)
-    export D_SHORTCOMMIT=$(c=$D_COMMIT; echo ${c:0:7})
-    export VERSION=$(sed -e 's/-.*//' VERSION)
-    popd
-
-    pushd $REPO_DIR/fedora-cloud/docker-selinux
-    export DS_COMMIT=$(git show --pretty=%H -s)
-    export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
-    popd
-
-    pushd $REPO_DIR/projectatomic/docker-storage-setup
-    export DSS_COMMIT=$(git show --pretty=%H -s)
-    export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
-    popd
-
-    pushd $REPO_DIR/vbatts/docker-utils
-    export UTILS_COMMIT=$(git show --pretty=%H -s)
-    export UTILS_SHORTCOMMIT=$(c=$UTILS_COMMIT; echo ${c:0:7})
-    popd
-}
-
-# update commit values in spec
-update_spec ()
-{
-    pushd $PKG_DIR/docker
+    pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
-    sed -i "s/\%global d_commit.*/\%global d_commit $D_COMMIT/" docker.spec
-    sed -i "s/\%global ds_commit.*/\%global ds_commit $DS_COMMIT/" docker.spec
-    sed -i "s/\%global dss_commit.*/\%global dss_commit $DSS_COMMIT/" docker.spec
-
-    echo "- built docker @$BRANCH commit#$D_SHORTCOMMIT" > /tmp/docker.changelog
-    echo "- built docker-selinux master commit#$DS_SHORTCOMMIT" >> /tmp/docker.changelog
-    echo "- built d-s-s master commit#$DSS_SHORTCOMMIT" >> /tmp/docker.changelog
-    echo "- built docker-utils master commit#$UTILS_SHORTCOMMIT" >> /tmp/docker.changelog
-    rpmdev-bumpspec -c "$(cat /tmp/docker.changelog)" docker.spec
+    rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+#    export RELEASE=$(cat $PACKAGE.spec | grep "Release:" | \
+#        sed -e "s/Release: //")
+    spectool -g $PACKAGE.spec
+    sudo dnf builddep $PACKAGE.spec -y
+    rpmbuild -ba $PACKAGE.spec
+    git reset --hard
+    fedpkg import --skip-diffs SRPMS/*
+    export NVR=$(ls SRPMS | sed -e "s/\.fc.*//")
+    git commit -as -m "NVR: $NVR" -m "$(cat /tmp/$PACKAGE.changelog)"
     popd
 }
+
+
+
+
+
+
 
 # update spec changelog and release value
 bump_spec ()
 {
-    pushd $PKG_DIR/docker
-    export CURRENT_VERSION=$(cat docker.spec | grep "Version:" | \
+    pushd $PKG_DIR/$PACKAGE
+    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep "Version:" | \
         sed -e "s/Version: //")
     if [ "$CURRENT_VERSION" == "$VERSION" ]; then
-        rpmdev-bumpspec -c "built docker @lsm5/fedora commit#$D_SHORTCOMMIT"  docker.spec
+        rpmdev-bumpspec -c "built $PACKAGE @lsm5/fedora commit#$D_SHORTCOMMIT"  docker.spec
     else
         rpmdev-bumpspec -n $VERSION -c "New version: $VERSION, built docker \
             @lsm5/commit#$D_SHORTCOMMIT" docker.spec
         sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{d_shortcommit}\%{?dist}/" docker.spec
     fi
-    popd
-}
-
-# rpmbuild
-fetch_and_build ()
-{
-    pushd $PKG_DIR/docker
-    git checkout $DIST_GIT_TAG
-    export RELEASE=$(cat docker.spec | grep "Release:" | \
-        sed -e "s/Release: //")
-    #bump_spec
-    spectool -g docker.spec
-    sudo dnf builddep docker.spec -y
-    rpmbuild -ba docker.spec
-    git reset --hard
-    fedpkg import --skip-diffs SRPMS/*
-    export NVR=$(ls SRPMS | sed -e "s/\.fc.*//")
-    git commit -as -m "NVR: $NVR" -m "$(cat /tmp/docker.changelog)"
     popd
 }
 
@@ -153,17 +94,17 @@ fi
 # (skip vendor/ paths)
 update_go_provides ()
 {
-    pushd $REPO_DIR/docker/docker
+    pushd $REPO_DIR/docker/$PACKAGE
     rm -rf vendor
     for line in $(gofed inspect -p)
         do
             if grep -Fxq "Provides: golang(%{import_path}/$line) = %{version}-%{release}" \
-                $PKG_DIR/docker/docker.spec
+                $PKG_DIR/docker/$PACKAGE.spec
             then
                 continue
             else
                 sed -i "/Summary:  A golang registry/a Provides: golang(%{import_path}/$line) = %{version}-%{release}" \
-                    $PKG_DIR/docker/docker.spec
+                    $PKG_DIR/docker/$PACKAGE.spec
             fi
         done
     popd

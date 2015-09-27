@@ -1,36 +1,49 @@
 #!/bin/sh
 
-. common.sh
+. env.sh
 
-cleanup_stale
-update_sources
-fetch_commit
-update_spec
-update_go_provides
-fetch_and_build
+# update sources
+update_sources_and_spec ()
+{
+    pushd $REPO_DIR/$PACKAGE
+    git fetch --all
+    git checkout $BRANCH
+    export D_COMMIT=$(git show --pretty=%H -s)
+    export D_SHORTCOMMIT=$(c=$D_COMMIT; echo ${c:0:7})
+    export VERSION=$(sed -e 's/-.*//' VERSION)
+    popd
 
+    pushd $REPO_DIR/$PACKAGE-storage-setup
+    git fetch origin
+    export DSS_COMMIT=$(git show --pretty=%H -s)
+    export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
+    popd
 
-#-------
-# Fedora
-#-------
+    pushd $REPO_DIR/$PACKAGE-selinux
+    git fetch origin
+    export DS_COMMIT=$(git show --pretty=%H -s)
+    export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
+    popd
 
-# get NVR
-#export NVR=$(ls SRPMS | sed -e "s/\.fc.*//")
+    pushd $REPO_DIR/$PACKAGE-utils
+    git fetch origin
+    export UTILS_COMMIT=$(git show --pretty=%H -s)
+    export UTILS_SHORTCOMMIT=$(c=$UTILS_COMMIT; echo ${c:0:7})
+    popd
 
-# commit changes after importing
-#git commit -asm "NVR: $NVR"
+    pushd $PKG_DIR/$PACKAGE
+    git checkout $DIST_GIT_TAG
+    sed -i "s/\%global d_commit.*/\%global d_commit $D_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global ds_commit.*/\%global ds_commit $DS_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global dss_commit.*/\%global dss_commit $DSS_COMMIT/" $PACKAGE.spec
 
-# push changes to github master
-#git push -u github master
+    echo "- built docker @$BRANCH commit#$D_SHORTCOMMIT" > /tmp/$PACKAGE.changelog
+    echo "- built docker-selinux master commit#$DS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    echo "- built d-s-s master commit#$DSS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    echo "- built docker-utils master commit#$UTILS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    popd
+}
 
-# push changes to dist-git master
-#git push -u origin master
-
-# sleep 10 seconds to let koji recognize the latest NVR
-#sleep 10
-
-# build package in koji
-#fedpkg build
 
 #-------
 # CentOS
