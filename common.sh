@@ -24,8 +24,8 @@ fetch_and_build ()
     sudo dnf builddep $PACKAGE.spec -y
     rpmbuild -ba $PACKAGE.spec
     git reset --hard
-    fedpkg import --skip-diffs SRPMS/*
-    export NVR=$(ls SRPMS | sed -e "s/\.fc.*//")
+    $DIST_PKG import --skip-diffs SRPMS/*
+    export NVR=$(ls SRPMS | sed -e "s/\.[fc|el7].*//")
     git commit -as -m "NVR: $NVR" -m "$(cat /tmp/$PACKAGE.changelog)"
     popd
 }

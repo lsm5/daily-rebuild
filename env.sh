@@ -12,6 +12,11 @@ while getopts ":p:d:b:k:" opt; do
         d)
             export DISTRO=$OPTARG
             echo "You chose distro: $DISTRO"
+            if [ $DISTRO == 'fedora' ]; then
+                export DIST_PKG="fedpkg"
+            elif [ $DISTRO == 'rhel' ]; then
+                export DIST_PKG="rhpkg"
+            fi
             ;;
         b)
             export BRANCH=$OPTARG
