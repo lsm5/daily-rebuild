@@ -2,7 +2,7 @@
 
 . env.sh
 
-. $PACKAGE.sh
+. pkgs/$PACKAGE.sh
 update_sources_and_spec
 
 . common.sh
