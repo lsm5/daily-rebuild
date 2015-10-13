@@ -8,6 +8,11 @@ while getopts ":p:d:b:k:" opt; do
         p)
             export PACKAGE=$OPTARG
             echo "You chose package: $PACKAGE"
+            if [ $PACKAGE == 'docker-io' ]; then
+                export UPSTREAM="docker"
+            else
+                export UPSTREAM=$PACKAGE
+            fi
             ;;
         d)
             export DISTRO=$OPTARG
