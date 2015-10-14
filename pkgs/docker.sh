@@ -8,26 +8,26 @@ update_sources_and_spec ()
     pushd $REPO_DIR/$PACKAGE
     git fetch --all
     git checkout $BRANCH
-    export D_COMMIT=$(git show --pretty=%H -s)
+    export D_COMMIT=$(git show --pretty=%H -s $BRANCH)
     export D_SHORTCOMMIT=$(c=$D_COMMIT; echo ${c:0:7})
     export VERSION=$(sed -e 's/-.*//' VERSION)
     popd
 
     pushd $REPO_DIR/$PACKAGE-storage-setup
     git fetch origin
-    export DSS_COMMIT=$(git show --pretty=%H -s)
+    export DSS_COMMIT=$(git show --pretty=%H -s origin/master)
     export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
     popd
 
     pushd $REPO_DIR/$PACKAGE-selinux
     git fetch origin
-    export DS_COMMIT=$(git show --pretty=%H -s)
+    export DS_COMMIT=$(git show --pretty=%H -s origin/master)
     export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
     popd
 
     pushd $REPO_DIR/$PACKAGE-utils
     git fetch origin
-    export UTILS_COMMIT=$(git show --pretty=%H -s)
+    export UTILS_COMMIT=$(git show --pretty=%H -s origin/master)
     export UTILS_SHORTCOMMIT=$(c=$UTILS_COMMIT; echo ${c:0:7})
     popd
 
