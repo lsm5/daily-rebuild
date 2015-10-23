@@ -17,7 +17,7 @@ update_sources_and_spec ()
     git checkout $DIST_GIT_TAG
     sed -i "s/\%global commit.*/\%global commit $COMMIT/" $PACKAGE.spec
 
-    echo "- built $PACKAGE @$BRANCH commit#$SHORTCOMMIT" > /tmp/$PACKAGE.changelog
+    echo "- built $PACKAGE commit#$SHORTCOMMIT" > /tmp/$PACKAGE.changelog
     popd
 }
 

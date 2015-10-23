@@ -21,7 +21,7 @@ update_sources_and_spec ()
 
     pushd $REPO_DIR/$PACKAGE-selinux
     git fetch origin
-    export DS_COMMIT=$(git show --pretty=%H -s origin/master)
+    export DS_COMMIT=$(git show --pretty=%H -s origin/rhel-1.9)
     export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
     popd
 
@@ -38,9 +38,9 @@ update_sources_and_spec ()
     sed -i "s/\%global dss_commit.*/\%global dss_commit $DSS_COMMIT/" $PACKAGE.spec
 
     echo "- built docker @$BRANCH commit#$D_SHORTCOMMIT" > /tmp/$PACKAGE.changelog
-    echo "- built docker-selinux master commit#$DS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-    echo "- built d-s-s master commit#$DSS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-utils master commit#$UTILS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    echo "- built docker-selinux commit#$DS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    echo "- built d-s-s commit#$DSS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    echo "- built docker-utils commit#$UTILS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     popd
 }
 

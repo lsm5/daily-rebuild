@@ -21,7 +21,7 @@ fetch_and_build ()
 #    export RELEASE=$(cat $PACKAGE.spec | grep "Release:" | \
 #        sed -e "s/Release: //")
     spectool -g $PACKAGE.spec
-    sudo dnf builddep $PACKAGE.spec -y
+    sudo yum-builddep $PACKAGE.spec -y
     rpmbuild -ba $PACKAGE.spec
     git reset --hard
     $DIST_PKG import --skip-diffs SRPMS/*
