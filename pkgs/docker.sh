@@ -21,7 +21,7 @@ update_sources_and_spec ()
 
     pushd $REPO_DIR/$PACKAGE-selinux
     git fetch origin
-    export DS_COMMIT=$(git show --pretty=%H -s origin/rhel-1.9)
+    export DS_COMMIT=$(git show --pretty=%H -s origin/$DS_BRANCH)
     export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
     popd
 
