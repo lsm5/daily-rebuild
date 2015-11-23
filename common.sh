@@ -25,7 +25,7 @@ fetch_and_build ()
     rpmbuild -ba $PACKAGE.spec
     git reset --hard
     $DIST_PKG import --skip-diffs SRPMS/*
-    export NVR=$(ls SRPMS | sed -e "s/\.[fc|el7].*//")
+    export NVR=$(ls SRPMS | sed -e "s/$DIST.*//")
     git commit -as -m "NVR: $NVR" -m "$(cat /tmp/$PACKAGE.changelog)"
     popd
 }

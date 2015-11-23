@@ -2,6 +2,7 @@
 
 export REPO_DIR=~/repositories
 export PKG_DIR=~/repositories/pkgs
+export DIST=$(rpm --eval %{?dist})
 
 while getopts ":p:d:b:k:" opt; do
     case $opt in
