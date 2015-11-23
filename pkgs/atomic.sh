@@ -10,7 +10,11 @@ update_sources_and_spec ()
     git checkout $BRANCH
     export COMMIT=$(git show --pretty=%H -s)
     export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
-    export VERSION=$(cat setup.py | grep version | sed -e "s/version='//" -e "s/',//" -e "s/    //")
+    export VERSION=$(cat setup.py | grep version | \
+        sed -e "s/__version__ = '//" \
+        -e "s/',//" \
+        -e "s/    //" \
+        -e "s/'//")
     popd
 
     pushd $PKG_DIR/$PACKAGE
