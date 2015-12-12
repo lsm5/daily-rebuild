@@ -33,9 +33,9 @@ update_sources_and_spec ()
 
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
-    sed -i "s/\%global d_commit.*/\%global d_commit $D_COMMIT/" $PACKAGE.spec
-    sed -i "s/\%global ds_commit.*/\%global ds_commit $DS_COMMIT/" $PACKAGE.spec
-    sed -i "s/\%global dss_commit.*/\%global dss_commit $DSS_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global commit0.*/\%global commit0 $D_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global commit2.*/\%global commit2 $DS_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global commit1.*/\%global commit1  $DSS_COMMIT/" $PACKAGE.spec
 
     echo "- built docker @$BRANCH commit#$D_SHORTCOMMIT" > /tmp/$PACKAGE.changelog
     echo "- built docker-selinux commit#$DS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
