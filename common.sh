@@ -10,18 +10,28 @@ cleanup_stale ()
     popd
 }
 
-# update sources & spec from $PACKAGE.sh file
+# update spec changelog and release value
+bump_spec ()
+{
+    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep "Version:" | \
+        sed -e "s/Version: //")
+    if [ "$CURRENT_VERSION" == "$VERSION" ]; then
+        rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+    else
+        rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+        sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
+        sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT/g" $PACKAGE.spec
+    fi
+}
 
 # rpmbuild
 fetch_and_build ()
 {
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
-    rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-#    export RELEASE=$(cat $PACKAGE.spec | grep "Release:" | \
-#        sed -e "s/Release: //")
+    bump_spec
     spectool -g $PACKAGE.spec
-    sudo yum-builddep $PACKAGE.spec -y
+    sudo $BUILDDEP $PACKAGE.spec -y
     rpmbuild -ba $PACKAGE.spec
     git reset --hard
     $DIST_PKG import --skip-diffs SRPMS/*
@@ -31,27 +41,7 @@ fetch_and_build ()
 }
 
 
-
-
-
-
-
-# update spec changelog and release value
-bump_spec ()
-{
-    pushd $PKG_DIR/$PACKAGE
-    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep "Version:" | \
-        sed -e "s/Version: //")
-    if [ "$CURRENT_VERSION" == "$VERSION" ]; then
-        rpmdev-bumpspec -c "built $PACKAGE @lsm5/fedora commit#$D_SHORTCOMMIT"  docker.spec
-    else
-        rpmdev-bumpspec -n $VERSION -c "New version: $VERSION, built docker \
-            @lsm5/commit#$D_SHORTCOMMIT" docker.spec
-        sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{d_shortcommit}\%{?dist}/" docker.spec
-    fi
-    popd
-}
-
+#--------------------MISC---------------------
 # if rebase fails, email patch author with output of 'git diff'
 # abort the rebase and exit
 email_if_rebase_failure ()
