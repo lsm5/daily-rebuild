@@ -31,16 +31,25 @@ update_sources_and_spec ()
     export UTILS_SHORTCOMMIT=$(c=$UTILS_COMMIT; echo ${c:0:7})
     popd
 
+    pushd $REPO_DIR/$PACKAGE-novolume-plugin
+    git fetch origin
+    export NOVOLUME_COMMIT=$(git show --pretty=%H -s origin/master)
+    export NOVOLUME_SHORTCOMMIT=$(c=$UTILS_COMMIT; echo ${c:0:7})
+    popd
+
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
     sed -i "s/\%global commit0.*/\%global commit0 $D_COMMIT/" $PACKAGE.spec
     sed -i "s/\%global commit2.*/\%global commit2 $DS_COMMIT/" $PACKAGE.spec
     sed -i "s/\%global commit1.*/\%global commit1  $DSS_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global commit3.*/\%global commit3  $UTILS_COMMIT/" $PACKAGE.spec
+    sed -i "s/\%global commit4.*/\%global commit4  $NOVOLUME_COMMIT/" $PACKAGE.spec
 
     echo "- built docker @$BRANCH commit#$D_SHORTCOMMIT" > /tmp/$PACKAGE.changelog
     echo "- built docker-selinux commit#$DS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     echo "- built d-s-s commit#$DSS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     echo "- built docker-utils commit#$UTILS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    echo "- built docker-novolume-plugin commit#$NOVOLUME_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     popd
 }
 

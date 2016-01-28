@@ -40,6 +40,27 @@ fetch_and_build ()
     popd
 }
 
+# print all golang paths
+# for each golang path, if it exists in spec file, continue
+# else, add the golang path just below the Summary: line
+# (skip vendor/ paths)
+update_go_provides ()
+{
+    pushd $REPO_DIR/$PACKAGE
+    rm -rf vendor
+    for line in $(gofed inspect -p)
+        do
+            if grep -Fxq "Provides: golang(%{import_path}/$line) = %{epoch}:%{version}-%{release}" \
+                $PKG_DIR/$PACKAGE/$PACKAGE.spec
+            then
+                continue
+            else
+                sed -i "/Summary:  A golang registry/a Provides: golang(%{import_path}/$line) = %{epoch}:%{version}-%{release}" \
+                    $PKG_DIR/$PACKAGE/$PACKAGE.spec
+            fi
+        done
+    popd
+}
 
 #--------------------MISC---------------------
 # if rebase fails, email patch author with output of 'git diff'
@@ -78,24 +99,3 @@ then
 fi
 }
 
-# print all golang paths
-# for each golang path, if it exists in spec file, continue
-# else, add the golang path just below the Summary: line
-# (skip vendor/ paths)
-update_go_provides ()
-{
-    pushd $REPO_DIR/docker/$PACKAGE
-    rm -rf vendor
-    for line in $(gofed inspect -p)
-        do
-            if grep -Fxq "Provides: golang(%{import_path}/$line) = %{version}-%{release}" \
-                $PKG_DIR/docker/$PACKAGE.spec
-            then
-                continue
-            else
-                sed -i "/Summary:  A golang registry/a Provides: golang(%{import_path}/$line) = %{version}-%{release}" \
-                    $PKG_DIR/docker/$PACKAGE.spec
-            fi
-        done
-    popd
-}
