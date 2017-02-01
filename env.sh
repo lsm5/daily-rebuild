@@ -9,11 +9,6 @@ while getopts ":p:d:b:k:" opt; do
         p)
             export PACKAGE=$OPTARG
             echo "You chose package: $PACKAGE"
-            if [ $PACKAGE == 'docker-io' ]; then
-                export UPSTREAM="docker"
-            else
-                export UPSTREAM=$PACKAGE
-            fi
             ;;
         d)
             export DISTRO=$OPTARG
@@ -32,10 +27,8 @@ while getopts ":p:d:b:k:" opt; do
             export KOJI_TAG=$OPTARG
             if [ $KOJI_TAG == 'rawhide' ]; then
                 export DIST_GIT_TAG="master"
-                export DS_BRANCH="fedora-1.9"
             else
                 export DIST_GIT_TAG=$KOJI_TAG
-                export DS_BRANCH="rhel-1.9"
             fi
             echo "You chose dist-git tag: $DIST_GIT_TAG"
             ;;
