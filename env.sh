@@ -4,6 +4,7 @@ export REPO_DIR=~/repositories
 export PKG_DIR=~/repositories/pkgs
 export DIST=$(rpm --eval %{?dist})
 export DIST_PKG="rhpkg"
+export BUILDDEP="yum-builddep"
 
 while getopts ":p:b:k:" opt; do
     case $opt in
