@@ -18,14 +18,8 @@ update_sources_and_spec ()
 
     pushd $REPO_DIR/$PACKAGE-storage-setup
     git fetch origin
-    export DSS_COMMIT=$(git show --pretty=%H -s origin/master)
-    export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
-    popd
-
-    pushd $REPO_DIR/container-selinux
-    git fetch origin
-    export DS_COMMIT=$(git show --pretty=%H -s origin/$DS_BRANCH)
-    export DS_SHORTCOMMIT=$(c=$DS_COMMIT; echo ${c:0:7})
+    #export DSS_COMMIT=$(git show --pretty=%H -s origin/master)
+    #export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
     popd
 
     pushd $REPO_DIR/v1.10-migrator
@@ -67,8 +61,7 @@ update_sources_and_spec ()
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
     sed -i "s/\%global commit0.*/\%global commit0 $D_COMMIT/" $PACKAGE.spec
-    sed -i "s/\%global commit1.*/\%global commit1 $DS_COMMIT/" $PACKAGE.spec
-    sed -i "s/\%global commit2.*/\%global commit2 $DSS_COMMIT/" $PACKAGE.spec
+    #sed -i "s/\%global commit2.*/\%global commit2 $DSS_COMMIT/" $PACKAGE.spec
     sed -i "s/\%global commit3.*/\%global commit3 $MIGRATOR_COMMIT/" $PACKAGE.spec
     sed -i "s/\%global commit4.*/\%global commit4 $NOVOLUME_COMMIT/" $PACKAGE.spec
     sed -i "s/\%global commit5.*/\%global commit5 $RP_COMMIT/" $PACKAGE.spec
@@ -77,8 +70,7 @@ update_sources_and_spec ()
     sed -i "s/\%global commit8.*/\%global commit8 $CD_COMMIT/" $PACKAGE.spec
 
     echo "- built docker @$BRANCH commit $D_SHORTCOMMIT" > /tmp/$PACKAGE.changelog
-    echo "- built container-selinux commit $DS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-    echo "- built d-s-s commit $DSS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+    #echo "- built d-s-s commit $DSS_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     echo "- built v1.10-migrator commit $MIGRATOR_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     echo "- built docker-novolume-plugin commit $NOVOLUME_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
     echo "- built rhel-push-plugin commit $RP_SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
