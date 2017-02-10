@@ -5,7 +5,7 @@
 # delete stale packages, tarballs and build dirs
 cleanup_stale ()
 {
-    pushd $PKG_DIR/$PACKAGE
+    pushd $PKG_DIR/$DIST/$PACKAGE
     git clean -dfx
     popd
 }
@@ -27,7 +27,7 @@ bump_spec ()
 # rpmbuild
 fetch_and_build ()
 {
-    pushd $PKG_DIR/$PACKAGE
+    pushd $PKG_DIR/$DIST/$PACKAGE
     git checkout $DIST_GIT_TAG
     bump_spec
     spectool -g $PACKAGE.spec
