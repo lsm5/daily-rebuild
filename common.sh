@@ -37,6 +37,13 @@ fetch_and_build ()
     spectool -g $PACKAGE.spec
     sudo $BUILDDEP $PACKAGE.spec -y
     rpmbuild -ba $PACKAGE.spec
+    popd
+}
+
+# update dist-git
+commit_to_dist_git
+{
+    pushd $PKG_DIR/$PACKAGE
     git reset --hard
     $DIST_PKG import --skip-diffs SRPMS/*
     export NVR=$(grep -A 1 '%changelog' $PACKAGE.spec | sed '$!d' | sed -e "s/[^']* - //")

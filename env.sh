@@ -13,10 +13,16 @@ else
     export BUILDDEP="dnf builddep"
 fi
 
-while getopts ":p:b:k:" opt; do
+while getopts ":p:u:r:b:k:" opt; do
     case $opt in
         p)
             export PACKAGE=$OPTARG
+            ;;
+        u)
+            export USER=$OPTARG
+            ;;
+        r)
+            export USER_REPO=$OPTARG
             ;;
         b)
             export BRANCH=$OPTARG
