@@ -29,7 +29,11 @@ while getopts ":p:u:r:b:k:" opt; do
             ;;
         k)
             export KOJI_TAG=$OPTARG
-            export DIST_GIT_TAG=$KOJI_TAG
+            if [ $KOJI_TAG = "rawhide" ]; then
+                export DIST_GIT_TAG="master"
+            else
+                export DIST_GIT_TAG=$KOJI_TAG
+            fi
             ;;
     esac
 done
