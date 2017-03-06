@@ -41,7 +41,7 @@ fetch_and_build ()
 }
 
 # update dist-git
-commit_to_dist_git
+commit_to_dist_git ()
 {
     pushd $PKG_DIR/$PACKAGE
     git reset --hard
