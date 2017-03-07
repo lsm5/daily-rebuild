@@ -32,7 +32,6 @@ bump_spec ()
 fetch_and_build ()
 {
     pushd $PKG_DIR/$PACKAGE
-    git reset --hard
     git checkout $DIST_GIT_TAG
     bump_spec
     spectool -g $PACKAGE.spec
