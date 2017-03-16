@@ -19,3 +19,7 @@ update_sources_and_spec
 . common.sh
 cleanup_stale
 fetch_and_build
+
+if [ $BUILDTYPE == "tagged" ]; then
+    commit_to_dist_git
+fi

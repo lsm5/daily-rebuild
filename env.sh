@@ -13,8 +13,11 @@ else
     export BUILDDEP="dnf builddep"
 fi
 
-while getopts ":p:u:r:b:k:" opt; do
+while getopts ":t:p:u:r:b:k:" opt; do
     case $opt in
+        t)
+            export BUILDTYPE=$OPTARG
+            ;;
         p)
             export PACKAGE=$OPTARG
             ;;
