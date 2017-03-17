@@ -13,6 +13,8 @@ update_sources_and_spec ()
     export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
     if [ $PACKAGE == "skopeo" ]; then
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version =\"//' | sed -e 's/-.*//')
+    elif [ $PACKAGE == "atomic" ]; then
+        export VERSION=$(grep '__version__' Atomic/__init__.py | sed -e "s/__version__ = '//" | sed -e "s/'//")
     else
         export VERSION=$(sed -e 's/-.*//' VERSION)
     fi
