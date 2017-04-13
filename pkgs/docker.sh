@@ -22,12 +22,6 @@ update_sources_and_spec ()
     #export DSS_SHORTCOMMIT=$(c=$DSS_COMMIT; echo ${c:0:7})
     #popd
 
-    pushd $REPO_DIR/v1.10-migrator
-    git fetch origin
-    export COMMIT_MIGRATOR=$(git show --pretty=%H -s origin/master)
-    export SHORTCOMMIT_MIGRATOR=$(c=$COMMIT_MIGRATOR; echo ${c:0:7})
-    popd
-
     pushd $REPO_DIR/$PACKAGE-novolume-plugin
     git fetch origin
     export COMMIT_NOVOLUME=$(git show --pretty=%H -s origin/master)
@@ -63,21 +57,19 @@ update_sources_and_spec ()
     sed -i "s/\%global git_docker.*/\%global git_docker https:\/\/github.com\/$USER\/$USER_REPO/" $PACKAGE.spec
     sed -i "s/\%global commit_docker.*/\%global commit_docker $COMMIT_DOCKER/" $PACKAGE.spec
     #sed -i "s/\%global commit_dss.*/\%global commit_dss $DSS_COMMIT/" $PACKAGE.spec
-    sed -i "s/\%global commit_migrator.*/\%global commit_migrator $COMMIT_MIGRATOR/" $PACKAGE.spec
-    sed -i "s/\%global commit_novolume.*/\%global commit_novolume $COMMIT_NOVOLUME/" $PACKAGE.spec
-    sed -i "s/\%global commit_rhel_push.*/\%global commit_rhel_push $COMMIT_RHEL_PUSH/" $PACKAGE.spec
-    sed -i "s/\%global commit_lvm.*/\%global commit_lvm $COMMIT_LVM/" $PACKAGE.spec
-    sed -i "s/\%global commit_runc.*/\%global commit_runc $COMMIT_RUNC/" $PACKAGE.spec
-    sed -i "s/\%global commit_containerd.*/\%global commit_containerd $COMMIT_CONTAINERD/" $PACKAGE.spec
+    #sed -i "s/\%global commit_novolume.*/\%global commit_novolume $COMMIT_NOVOLUME/" $PACKAGE.spec
+    #sed -i "s/\%global commit_rhel_push.*/\%global commit_rhel_push $COMMIT_RHEL_PUSH/" $PACKAGE.spec
+    #sed -i "s/\%global commit_lvm.*/\%global commit_lvm $COMMIT_LVM/" $PACKAGE.spec
+    #sed -i "s/\%global commit_runc.*/\%global commit_runc $COMMIT_RUNC/" $PACKAGE.spec
+    #sed -i "s/\%global commit_containerd.*/\%global commit_containerd $COMMIT_CONTAINERD/" $PACKAGE.spec
 
     echo "- built docker @$USER/$BRANCH commit $SHORTCOMMIT_DOCKER" > /tmp/$PACKAGE.changelog
     #echo "- built d-s-s commit $SHORTCOMMIT_DSS" >> /tmp/$PACKAGE.changelog
-    echo "- built v1.10-migrator commit $SHORTCOMMIT_MIGRATOR" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-novolume-plugin commit $SHORTCOMMIT_NOVOLUME" >> /tmp/$PACKAGE.changelog
-    echo "- built rhel-push-plugin commit $SHORTCOMMIT_RHEL_PUSH" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-lvm-plugin commit $SHORTCOMMIT_LVM" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-runc @$BRANCH commit $SHORTCOMMIT_RUNC" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-containerd @$CR_BRANCH commit $SHORTCOMMIT_CONTAINERD" >> /tmp/$PACKAGE.changelog
+    #echo "- built docker-novolume-plugin commit $SHORTCOMMIT_NOVOLUME" >> /tmp/$PACKAGE.changelog
+    #echo "- built rhel-push-plugin commit $SHORTCOMMIT_RHEL_PUSH" >> /tmp/$PACKAGE.changelog
+    #echo "- built docker-lvm-plugin commit $SHORTCOMMIT_LVM" >> /tmp/$PACKAGE.changelog
+    #echo "- built docker-runc @$BRANCH commit $SHORTCOMMIT_RUNC" >> /tmp/$PACKAGE.changelog
+    #echo "- built docker-containerd @$CR_BRANCH commit $SHORTCOMMIT_CONTAINERD" >> /tmp/$PACKAGE.changelog
 
     popd
 }
