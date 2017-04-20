@@ -15,6 +15,8 @@ update_sources_and_spec ()
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version =\"//' | sed -e 's/-.*//')
     elif [ $PACKAGE == "atomic" ]; then
         export VERSION=$(grep '__version__' Atomic/__init__.py | sed -e "s/__version__ = '//" | sed -e "s/'//")
+    elif [ $PACKAGE == "rkt" ]; then
+         export VERSION=$(grep AC_INIT configure.ac | cut -d' ' -f2 | tr -d \]\[, | tr -d +git)
     else
         export VERSION=$(sed -e 's/-.*//' VERSION)
     fi

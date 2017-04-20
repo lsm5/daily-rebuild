@@ -13,18 +13,18 @@ cleanup_stale ()
 # update spec changelog and release value
 bump_spec ()
 {
-    if [ $PACKAGE == 'docker' ]; then
-        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep "Version:" | \
-            sed -e "s/Version: //")
-        if [ "$CURRENT_VERSION" == "$VERSION" ]; then
-            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-        else
-            rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-            sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
-            sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT/g" $PACKAGE.spec
-        fi
-    else
+    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep "Version:" | \
+        sed -e "s/Version: //")
+    if [ "$CURRENT_VERSION" == "$VERSION" ]; then
         rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+    elif [ $PACKAGE == 'docker' ]; then
+        rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+        sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit_docker}\%{?dist}/" $PACKAGE.spec
+        sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT_DOCKER/g" $PACKAGE.spec
+    else
+        rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+        sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
+        sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT/g" $PACKAGE.spec
     fi
 }
 
