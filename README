@@ -1,44 +1,20 @@
 Copy $(pwd)/.rpmmacros into ~/
 
-Assumptions:
-
-docker dist-git source in ~/repositories/pkgs/docker
-
-source repos in ~/repositories/
-currently:
-
-docker
-remote: origin git://github.com/docker/docker.git
-remote: projectatomic git://github.com/projectatomic/docker.git)
-
-docker-storage-setup
-remote: origin git://github.com/projectatomic/docker-storage-setup.git
-
-v1.10-migrator
-remote: origin git://github.com/docker/v1.10-migrator.git
-
-docker-novolume-plugin
-remote: origin git://github.com/projectatomic/docker-novolume--plugin.git
-
-rhel-push-plugin
-remote: origin git://github.com/projectatomic/rhel-push-plugin.git
-
-docker-lvm-plugin
-remote: origin git://github.com/projectatomic/docker-lvm--plugin.git
-
-runc
-remote: origin git://github.com/opencontainers/runc.git
-remote: projectatomic git://github.com/projectatomic/runc.git
-
-containerd
-remote: origin git://github.com/docker/containerd.git
-remote: projectatomic git://github.com/projectatomic/containerd.git
-
-Remotes are assumed to be pre-added.
-
+source repos assumed to be in ~/repositories/
+dist-git repos assumed to be in ~/repositories/pkgs
 
 To run the script:
-# bash builder.sh -p $PACKAGE -b $REMOTE/$BRANCH -k $BREW_BRANCH
+# bash builder.sh -t $BUILD_TYPE -p $PACKAGE -u $GITHUB_USER -r $GITHUB_USER_REPO_NAME -b $GITHUB_USER_REPO_BRANCH -k
 
-For now, this branch only builds docker and I've removed other packages:
-# bash builder.sh -p docker -b projectatomic/docker-1.12.6 -k extras-rhel-7.3
+BUILD_TYPE: 'tagged' or 'scratch'
+
+PACKAGE: rpm name
+
+GITHUB_USER: PR author/upstream github user id
+
+GITHUB_USER_REPO_NAME: repo/fork name
+
+GITHUB_USER_REPO_BRANCH: repo/fork branch name
+
+KOJI_BRANCH: koji tag branch (NOT the dist-git branch name)
+In the case of rawhide, KOJI_BRANCH will be "rawhide" and not "master"
