@@ -13,7 +13,7 @@ else
     export BUILDDEP="dnf builddep"
 fi
 
-while getopts ":t:p:u:r:b:k:" opt; do
+while getopts ":t:p:u:r:b:d:f:k:" opt; do
     case $opt in
         t)
             export BUILDTYPE=$OPTARG
@@ -29,6 +29,12 @@ while getopts ":t:p:u:r:b:k:" opt; do
             ;;
         b)
             export BRANCH=$OPTARG
+            ;;
+        d)
+            export UPSTREAM_USER=$OPTARG
+            ;;
+        f)
+            export UPSTREAM_BRANCH=$OPTARG
             ;;
         k)
             export KOJI_TAG=$OPTARG

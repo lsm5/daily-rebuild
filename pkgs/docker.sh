@@ -8,7 +8,6 @@ update_sources_and_spec ()
     pushd $REPO_DIR/$PACKAGE
     git remote add $USER git://github.com/$USER/$USER_REPO.git
     git fetch $USER
-    git checkout $USER/$BRANCH
     export COMMIT_DOCKER=$(git show --pretty=%H -s $USER/$BRANCH)
     export SHORTCOMMIT_DOCKER=$(c=$COMMIT_DOCKER; echo ${c:0:7})
     export VERSION=$(sed -e 's/-.*//' VERSION)
@@ -39,14 +38,16 @@ update_sources_and_spec ()
     popd
 
     pushd $REPO_DIR/runc
-    git fetch origin
-    export COMMIT_RUNC=$(git show --pretty=%H -s $USER/$BRANCH)
+    git remote add projectatomic git://github.com/projectatomic/runc.git
+    git fetch --all
+    export COMMIT_RUNC=$(git show --pretty=%H -s projectatomic/$UPSTREAM_BRANCH)
     export SHORTCOMMIT_RUNC=$(c=$COMMIT_RUNC; echo ${c:0:7})
     popd
 
     pushd $REPO_DIR/containerd
-    git fetch origin
-    export COMMIT_CONTAINERD=$(git show --pretty=%H -s $USER/$BRANCH)
+    git remote add projectatomic git://github.com/projectatomic/containerd.git
+    git fetch --all
+    export COMMIT_CONTAINERD=$(git show --pretty=%H -s projectatomic/$UPSTREAM_BRANCH)
     export SHORTCOMMIT_CONTAINERD=$(c=$COMMIT_CONTAINERD; echo ${c:0:7})
     popd
 
@@ -66,8 +67,8 @@ update_sources_and_spec ()
     echo "- built docker-novolume-plugin commit $SHORTCOMMIT_NOVOLUME" >> /tmp/$PACKAGE.changelog
     echo "- built rhel-push-plugin commit $SHORTCOMMIT_RHEL_PUSH" >> /tmp/$PACKAGE.changelog
     echo "- built docker-lvm-plugin commit $SHORTCOMMIT_LVM" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-runc @$USER/$BRANCH commit $SHORTCOMMIT_RUNC" >> /tmp/$PACKAGE.changelog
-    echo "- built docker-containerd @$USER/$BRANCH commit $SHORTCOMMIT_CONTAINERD" >> /tmp/$PACKAGE.changelog
+    echo "- built docker-runc @projectatomic/$UPSTREAM_BRANCH commit $SHORTCOMMIT_RUNC" >> /tmp/$PACKAGE.changelog
+    echo "- built docker-containerd @projectatomic/$UPSTREAM_BRANCH commit $SHORTCOMMIT_CONTAINERD" >> /tmp/$PACKAGE.changelog
 
     popd
 }

@@ -4,17 +4,23 @@ source repos assumed to be in ~/repositories/
 dist-git repos assumed to be in ~/repositories/pkgs
 
 To run the script:
-# bash builder.sh -t $BUILD_TYPE -p $PACKAGE -u $GITHUB_USER -r $GITHUB_USER_REPO_NAME -b $GITHUB_USER_REPO_BRANCH -k
+# bash builder.sh -t $BUILDTYPE -p $PACKAGE -u $USER \
+    -r $USER_REPO -b $BRANCH \
+    -d $UPSTREAM_USER -f $UPSTREAM_BRANCH -k $KOJI_TAG
 
-BUILD_TYPE: 'tagged' or 'scratch'
+BUILDTYPE: 'tagged' or 'scratch'
 
 PACKAGE: rpm name
 
-GITHUB_USER: PR author/upstream github user id
+USER: PR author's github user id
 
-GITHUB_USER_REPO_NAME: repo/fork name
+USER_REPO: repo/fork name
 
-GITHUB_USER_REPO_BRANCH: repo/fork branch name
+BRANCH: repo/fork branch name
 
-KOJI_BRANCH: koji tag branch (NOT the dist-git branch name)
+UPSTREAM_USER: PR recipient / upstream's github user id
+
+UPSTREAM_BRANCH: PR destination's branch name
+
+KOJI_TAG: koji tag (NOT the dist-git branch name)
 In the case of rawhide, KOJI_BRANCH will be "rawhide" and not "master"
