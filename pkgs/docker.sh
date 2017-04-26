@@ -8,6 +8,7 @@ update_sources_and_spec ()
     pushd $REPO_DIR/$PACKAGE
     git remote add $USER git://github.com/$USER/$USER_REPO.git
     git fetch $USER
+    git checkout $USER/$BRANCH
     export COMMIT_DOCKER=$(git show --pretty=%H -s $USER/$BRANCH)
     export SHORTCOMMIT_DOCKER=$(c=$COMMIT_DOCKER; echo ${c:0:7})
     export VERSION=$(sed -e 's/-.*//' VERSION)
