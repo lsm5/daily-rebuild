@@ -22,5 +22,5 @@ UPSTREAM_USER: PR recipient / upstream's github user id
 
 UPSTREAM_BRANCH: PR destination's branch name
 
-KOJI_TAG: koji tag (NOT the dist-git branch name)
+KOJI_TAG: koji tag (NOT NECESSARILY the dist-git branch name)
 In the case of rawhide, KOJI_BRANCH will be "rawhide" and not "master"
