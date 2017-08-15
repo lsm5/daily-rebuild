@@ -52,6 +52,12 @@ update_sources_and_spec ()
     export SHORTCOMMIT_CONTAINERD=$(c=$COMMIT_CONTAINERD; echo ${c:0:7})
     popd
 
+    pushd $REPO_DIR/oci-umount
+    git fetch --all
+    export COMMIT_UMOUNT=$(git show --pretty=%H -s origin/master)
+    export SHORTCOMMIT_UMOUNT=$(c=$COMMIT_UMOUNT; echo ${c:0:7})
+    popd
+
     if [ $UPSTREAM_BRANCH == "docker-1.13.1" ]; then
         pushd $REPO_DIR/tini
         git fetch origin
@@ -76,6 +82,7 @@ update_sources_and_spec ()
     sed -i "s/\%global commit_lvm.*/\%global commit_lvm $COMMIT_LVM/" $PACKAGE.spec
     sed -i "s/\%global commit_runc.*/\%global commit_runc $COMMIT_RUNC/" $PACKAGE.spec
     sed -i "s/\%global commit_containerd.*/\%global commit_containerd $COMMIT_CONTAINERD/" $PACKAGE.spec
+    sed -i "s/\%global commit_umount.*/\%global commit_umount $COMMIT_UMOUNT/" $PACKAGE.spec
 
     echo "- built docker @$USER/$BRANCH commit $SHORTCOMMIT_DOCKER" > /tmp/$PACKAGE.changelog
     #echo "- built d-s-s commit $SHORTCOMMIT_DSS" >> /tmp/$PACKAGE.changelog
@@ -84,6 +91,7 @@ update_sources_and_spec ()
     echo "- built docker-lvm-plugin commit $SHORTCOMMIT_LVM" >> /tmp/$PACKAGE.changelog
     echo "- built docker-runc @projectatomic/$UPSTREAM_BRANCH commit $SHORTCOMMIT_RUNC" >> /tmp/$PACKAGE.changelog
     echo "- built docker-containerd @projectatomic/$UPSTREAM_BRANCH commit $SHORTCOMMIT_CONTAINERD" >> /tmp/$PACKAGE.changelog
+    echo "- built oci-umount commit $SHORTCOMMIT_UMOUNT" >> /tmp/$PACKAGE.changelog
 
     if [ $UPSTREAM_BRANCH == "docker-1.13.1" ]; then
         sed -i "s/\%global commit_tini.*/\%global commit_tini $COMMIT_TINI/" $PACKAGE.spec
