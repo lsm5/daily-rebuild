@@ -6,15 +6,12 @@ case "$PACKAGE" in
     docker)
         . pkgs/$PACKAGE.sh
         ;;
-    docker-latest)
-        . pkgs/$PACKAGE.sh
-        ;;
     *)
         . pkgs/default.sh
         ;;
 esac
 
-update_sources_and_spec
+fetch_version_and_commit
 
 . common.sh
 cleanup_stale
@@ -22,4 +19,5 @@ fetch_and_build
 
 if [ $BUILDTYPE == "tagged" ]; then
     commit_to_dist_git
+    push_and_build
 fi

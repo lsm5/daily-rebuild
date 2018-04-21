@@ -2,30 +2,25 @@
 
 . env.sh
 
-# update sources
-update_sources_and_spec ()
+# fetch version and commit info
+fetch_version_and_commit ()
 {
     pushd $REPO_DIR/$PACKAGE
-    git remote add $USER git://github.com/$USER/$USER_REPO.git
-    git fetch --all
-    git checkout $USER/$BRANCH
-    export COMMIT=$(git show --pretty=%H -s $USER/$BRANCH)
+    git fetch origin
+    export COMMIT=$(git show --pretty=%H -s origin/master)
     export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
-    if [ $PACKAGE == "skopeo" ]; then
-        export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version =\"//' | sed -e 's/-.*//')
-    elif [ $PACKAGE == "atomic" ]; then
-        export VERSION=$(grep '__version__' Atomic/__init__.py | sed -e "s/__version__ = '//" | sed -e "s/'//")
-    elif [ $PACKAGE == "rkt" ]; then
-         export VERSION=$(grep AC_INIT configure.ac | cut -d' ' -f2 | tr -d \]\[, | tr -d +git)
+    if [ $PACKAGE == atomic ]; then
+        export VERSION=$(grep "__version__" Atomic/__init__.py | sed -e 's/__version__ = //' -e "s/'//g")
+    elif [ $PACKAGE == buildah ]; then
+        export VERSION=$(grep 'Version =' buildah.go | sed -e 's/\tVersion = //' -e 's/"//g' -e 's/-.*//')
+    elif [ $PACKAGE == container-selinux ]; then
+        export VERSION=$(cat VERSION)
+    elif [ $PACKAGE == cri-tools ]; then
+        export VERSION=$(grep 'app.Version' cmd/crictl/main.go | sed -e 's/\tapp.Version = //' -e 's/"//g' -e 's/-.*//')
+    elif [ $PACKAGE == runc ]; then
+        export VERSION=$(cat VERSION | sed -e 's/-.*//')
     else
-        export VERSION=$(sed -e 's/-.*//' VERSION)
+        export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
     fi
-    popd
-
-    pushd $PKG_DIR/$PACKAGE
-    git checkout $DIST_GIT_TAG
-    sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
-
-    echo "- built @$USER/$BRANCH commit $SHORTCOMMIT" > /tmp/$PACKAGE.changelog
     popd
 }

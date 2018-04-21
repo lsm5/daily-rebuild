@@ -5,6 +5,9 @@
 # delete stale packages, tarballs and build dirs
 cleanup_stale ()
 {
+    if [ -f /tmp/$PACKAGE.changelog ]; then
+        rm /tmp/$PACKAGE.changelog
+    fi
     pushd $PKG_DIR/$PACKAGE
     git clean -dfx
     popd
@@ -13,13 +16,25 @@ cleanup_stale ()
 # update spec changelog and release value
 bump_spec ()
 {
-    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
-    if [ $CURRENT_VERSION == $VERSION ]; then
-        rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+    pushd $PKG_DIR/$PACKAGE
+    git checkout $DIST_GIT_TAG
+    export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
+    if [ $COMMIT == $CURRENT_COMMIT ]; then
+        echo "No change upstream since last build. Exiting..."
+        exit 0
     else
-        rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-        sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
-        sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT/1" $PACKAGE.spec
+        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
+        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
+        if [ $CURRENT_VERSION != $VERSION ]; then
+            echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
+            echo "- autobuilt commit $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+            rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+            sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
+            sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT/1" $PACKAGE.spec
+        else
+            echo "- autobuilt commit $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+        fi
     fi
 }
 
@@ -32,6 +47,10 @@ fetch_and_build ()
     spectool -g $PACKAGE.spec
     sudo $BUILDDEP $PACKAGE.spec -y
     rpmbuild -ba $PACKAGE.spec
+    if [ $? -ne 0 ]; then
+        echo "rpm build FAIL!!!"
+        exit 1
+    fi
     popd
 }
 
@@ -39,10 +58,21 @@ fetch_and_build ()
 commit_to_dist_git ()
 {
     pushd $PKG_DIR/$PACKAGE
-    git reset --hard
-    $DIST_PKG import --skip-diffs SRPMS/*
+    $DIST_PKG new-sources *.tar*
     export NVR=$(grep -A 1 '%changelog' $PACKAGE.spec | sed '$!d' | sed -e "s/[^']* - //")
     git commit -as -m "$PACKAGE-$NVR" -m "$(cat /tmp/$PACKAGE.changelog)"
     popd
 }
 
+# push and build
+push_and_build ()
+{
+    pushd $PKG_DIR/$PACKAGE
+    git push -u origin master
+    if [ $? -ne 0 ]; then
+        echo "git push FAIL!!!"
+        exit 1
+    fi
+    fedpkg build
+    popd
+}

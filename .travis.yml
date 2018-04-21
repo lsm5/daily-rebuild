@@ -1,0 +1,65 @@
+---
+
+sudo: required
+
+language: Generic
+
+services:
+    - docker
+
+branches:
+    only:
+        - rawhide
+
+env:
+    global:
+        - TRAVIS_ENV="-e TRAVIS=$TRAVIS
+          -e CI=$CI -e TRAVIS_COMMIT=$TRAVIS_COMMIT
+          -e TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE
+          -e TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG
+          -e TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST
+          -e TRAVIS_PULL_REQUEST_SHA=$TRAVIS_PULL_REQUEST_SHA
+          -e TRAVIS_PULL_REQUEST_SLUG=$TRAVIS_PULL_REQUEST_SLUG
+          -e TRAVIS_BRANCH=$TRAVIS_BRANCH
+          -e TRAVIS_JOB_ID=$TRAVIS_JOB_ID
+          -e TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR"
+
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get -qqy install realpath
+
+jobs:
+    include:
+        - stage: build-fedora-rawhide
+        - script:
+            - env
+            - echo "Building atomic in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide atomic"
+        - script:
+            - env
+            - echo "Building buildah in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide buildah"
+        - script:
+            - env
+            - echo "Building container-selinux in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide container-selinux"
+        - script:
+            - env
+            - echo "Building cri-o in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide cri-o"
+        - script:
+            - env
+            - echo "Building cri-tools in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide cri-tools"
+        - script:
+            - env
+            - echo "Building podman in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide podman"
+        - script:
+            - env
+            - echo "Building runc in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide runc"
+        - script:
+            - env
+            - echo "Building skopeo in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide skopeo"

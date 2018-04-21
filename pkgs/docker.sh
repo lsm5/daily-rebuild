@@ -52,53 +52,38 @@ update_sources_and_spec ()
     export SHORTCOMMIT_CONTAINERD=$(c=$COMMIT_CONTAINERD; echo ${c:0:7})
     popd
 
-    pushd $REPO_DIR/oci-umount
-    git fetch --all
-    export COMMIT_UMOUNT=$(git show --pretty=%H -s origin/master)
-    export SHORTCOMMIT_UMOUNT=$(c=$COMMIT_UMOUNT; echo ${c:0:7})
+    pushd $REPO_DIR/tini
+    git fetch origin
+    export COMMIT_TINI=$(git show --pretty=%H -s origin/master)
+    export SHORTCOMMIT_TINI=$(c=$COMMIT_TINI; echo ${c:0:7})
     popd
 
-    if [ $UPSTREAM_BRANCH == "docker-1.13.1" ]; then
-        pushd $REPO_DIR/tini
-        git fetch origin
-        export COMMIT_TINI=$(git show --pretty=%H -s origin/master)
-        export SHORTCOMMIT_TINI=$(c=$COMMIT_TINI; echo ${c:0:7})
-        popd
-
-        pushd $REPO_DIR/libnetwork
-        git fetch origin
-        export COMMIT_LIBNETWORK=$(git show --pretty=%H -s origin/master)
-        export SHORTCOMMIT_LIBNETWORK=$(c=$COMMIT_LIBNETWORK; echo ${c:0:7})
-        popd
-    fi
+    pushd $REPO_DIR/libnetwork
+    git fetch origin
+    export COMMIT_LIBNETWORK=$(git show --pretty=%H -s origin/master)
+    export SHORTCOMMIT_LIBNETWORK=$(c=$COMMIT_LIBNETWORK; echo ${c:0:7})
+    popd
 
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
     sed -i "s/\%global git_docker.*/\%global git_docker https:\/\/github.com\/$USER\/$USER_REPO/" $PACKAGE.spec
     sed -i "s/\%global commit_docker.*/\%global commit_docker $COMMIT_DOCKER/" $PACKAGE.spec
-    #sed -i "s/\%global commit_dss.*/\%global commit_dss $DSS_COMMIT/" $PACKAGE.spec
     sed -i "s/\%global commit_novolume.*/\%global commit_novolume $COMMIT_NOVOLUME/" $PACKAGE.spec
     sed -i "s/\%global commit_rhel_push.*/\%global commit_rhel_push $COMMIT_RHEL_PUSH/" $PACKAGE.spec
     sed -i "s/\%global commit_lvm.*/\%global commit_lvm $COMMIT_LVM/" $PACKAGE.spec
     sed -i "s/\%global commit_runc.*/\%global commit_runc $COMMIT_RUNC/" $PACKAGE.spec
     sed -i "s/\%global commit_containerd.*/\%global commit_containerd $COMMIT_CONTAINERD/" $PACKAGE.spec
-    sed -i "s/\%global commit_umount.*/\%global commit_umount $COMMIT_UMOUNT/" $PACKAGE.spec
+    sed -i "s/\%global commit_tini.*/\%global commit_tini $COMMIT_TINI/" $PACKAGE.spec
+    sed -i "s/\%global commit_libnetwork.*/\%global commit_libnetwork $COMMIT_LIBNETWORK/" $PACKAGE.spec
 
     echo "- built docker @$USER/$BRANCH commit $SHORTCOMMIT_DOCKER" > /tmp/$PACKAGE.changelog
-    #echo "- built d-s-s commit $SHORTCOMMIT_DSS" >> /tmp/$PACKAGE.changelog
     echo "- built docker-novolume-plugin commit $SHORTCOMMIT_NOVOLUME" >> /tmp/$PACKAGE.changelog
     echo "- built rhel-push-plugin commit $SHORTCOMMIT_RHEL_PUSH" >> /tmp/$PACKAGE.changelog
     echo "- built docker-lvm-plugin commit $SHORTCOMMIT_LVM" >> /tmp/$PACKAGE.changelog
     echo "- built docker-runc @projectatomic/$UPSTREAM_BRANCH commit $SHORTCOMMIT_RUNC" >> /tmp/$PACKAGE.changelog
     echo "- built docker-containerd @projectatomic/$UPSTREAM_BRANCH commit $SHORTCOMMIT_CONTAINERD" >> /tmp/$PACKAGE.changelog
-    echo "- built oci-umount commit $SHORTCOMMIT_UMOUNT" >> /tmp/$PACKAGE.changelog
-
-    if [ $UPSTREAM_BRANCH == "docker-1.13.1" ]; then
-        sed -i "s/\%global commit_tini.*/\%global commit_tini $COMMIT_TINI/" $PACKAGE.spec
-        sed -i "s/\%global commit_libnetwork.*/\%global commit_libnetwork $COMMIT_LIBNETWORK/" $PACKAGE.spec
-        echo "- built docker-init commit $SHORTCOMMIT_TINI" >> /tmp/$PACKAGE.changelog
-        echo "- built libnetwork commit $SHORTCOMMIT_LIBNETWORK" >> /tmp/$PACKAGE.changelog
-    fi
+    echo "- built docker-init commit $SHORTCOMMIT_TINI" >> /tmp/$PACKAGE.changelog
+    echo "- built libnetwork commit $SHORTCOMMIT_LIBNETWORK" >> /tmp/$PACKAGE.changelog
 
     popd
 }
