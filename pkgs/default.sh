@@ -7,6 +7,7 @@ fetch_version_and_commit ()
 {
     pushd $REPO_DIR/$PACKAGE
     git fetch origin
+    git checkout origin/master
     export COMMIT=$(git show --pretty=%H -s origin/master)
     export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
     if [ $PACKAGE == atomic ]; then
