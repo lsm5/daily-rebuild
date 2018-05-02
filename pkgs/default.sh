@@ -20,6 +20,11 @@ fetch_version_and_commit ()
         export VERSION=$(grep 'app.Version' cmd/crictl/main.go | sed -e 's/\tapp.Version = //' -e 's/"//g' -e 's/-.*//')
     elif [ $PACKAGE == runc ]; then
         export VERSION=$(cat VERSION | sed -e 's/-.*//')
+    elif [ $PACKAGE == container-storage-setup ]; then
+        export MAJOR_VERSION=$(grep '_CSS_MAJOR_VERSION=' $PACKAGE.sh | sed -e 's/_CSS_MAJOR_VERSION=//' -e 's/"//g')
+        export MINOR_VERSION=$(grep '_CSS_MINOR_VERSION=' $PACKAGE.sh | sed -e 's/_CSS_MINOR_VERSION=//' -e 's/"//g')
+        export SUBLEVEL=$(grep '_CSS_SUBLEVEL=' $PACKAGE.sh | sed -e 's/_CSS_SUBLEVEL=//' -e 's/"//g')
+        export VERSION=$MAJOR_VERSION.$MINOR_VERSION.$SUBLEVEL
     else
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
     fi

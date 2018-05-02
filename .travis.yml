@@ -45,6 +45,10 @@ jobs:
             - "./hack/run_build.sh fedora rawhide container-selinux"
         - script:
             - env
+            - echo "Building container-selinux in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide container-storage-setup"
+        - script:
+            - env
             - echo "Building cri-o in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide cri-o"
         - script:
