@@ -29,8 +29,8 @@ bump_spec ()
             echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
             echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
             rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-            sed -i "s/Release: 1\%{?dist}/Release: 1.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
-            sed -i "s/$VERSION-1/$VERSION-1.git$SHORTCOMMIT/1" $PACKAGE.spec
+            sed -i "s/Release: 1\%{?dist}/Release: 1.dev.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
+            sed -i "s/$VERSION-1/$VERSION-1.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
         else
             echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
             rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
