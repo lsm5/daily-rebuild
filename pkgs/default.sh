@@ -17,7 +17,7 @@ fetch_version_and_commit ()
     elif [ $PACKAGE == container-selinux ]; then
         export VERSION=$(cat VERSION)
     elif [ $PACKAGE == cri-tools ]; then
-        export VERSION=$(grep 'app.Version' cmd/crictl/main.go | sed -e 's/\tapp.Version = //' -e 's/"//g' -e 's/-.*//')
+        export VERSION=$(git describe --tags --dirty --always | sed -e 's/v//' -e 's/-.*//')
     elif [ $PACKAGE == runc ]; then
         export VERSION=$(cat VERSION | sed -e 's/-.*//')
     elif [ $PACKAGE == container-storage-setup ]; then
