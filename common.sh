@@ -18,8 +18,9 @@ bump_spec ()
 {
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
+    echo "DIST_GIT_TAG ===== " $DIST_GIT_TAG
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
-    if [ $COMMIT == $CURRENT_COMMIT ]; then
+    if [[ $COMMIT == $CURRENT_COMMIT ]]; then
         echo "No change upstream since last build. Exiting..."
         exit 0
     else
@@ -45,8 +46,8 @@ fetch_and_build ()
     git checkout $DIST_GIT_TAG
     bump_spec
     spectool -g $PACKAGE.spec
-    sudo $BUILDDEP $PACKAGE.spec -y
-    rpmbuild -ba $PACKAGE.spec
+    sudo dnf builddep -y $PACKAGE.spec
+    rpmbuild --define='dist .el7' -ba $PACKAGE.spec
     if [ $? -ne 0 ]; then
         echo "rpm build FAIL!!!"
         exit 1
