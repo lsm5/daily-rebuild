@@ -17,7 +17,7 @@ fetch_version_and_commit
 cleanup_stale
 fetch_and_build
 
-if [ $BUILDTYPE == "tagged" ]; then
-    commit_to_dist_git
-    push_and_build
-fi
+#if [ $BUILDTYPE == "tagged" ]; then
+#    commit_to_dist_git
+#    push_and_build
+#fi

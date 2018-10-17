@@ -43,7 +43,7 @@ bump_spec ()
 fetch_and_build ()
 {
     pushd $PKG_DIR/$PACKAGE
-    git checkout $DIST_GIT_TAG
+    git checkout private-staging-rhaos-4.0-rhel-7
     bump_spec
     spectool -g $PACKAGE.spec
     sudo dnf builddep -y $PACKAGE.spec
