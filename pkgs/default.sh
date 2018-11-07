@@ -10,14 +10,10 @@ fetch_version_and_commit ()
     git checkout origin/master
     export COMMIT=$(git show --pretty=%H -s origin/master)
     export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
-    if [ $PACKAGE == atomic ]; then
-        export VERSION=$(grep "__version__" Atomic/__init__.py | sed -e 's/__version__ = //' -e "s/'//g")
-    elif [ $PACKAGE == buildah ]; then
+    if [ $PACKAGE == buildah ]; then
         export VERSION=$(grep 'Version =' buildah.go | sed -e 's/\tVersion = //' -e 's/"//g' -e 's/-.*//')
     elif [ $PACKAGE == container-selinux ]; then
         export VERSION=$(cat VERSION)
-    elif [ $PACKAGE == cri-tools ]; then
-        export VERSION=$(git describe --tags --dirty --always | sed -e 's/v//' -e 's/-.*//')
     elif [ $PACKAGE == runc ]; then
         export VERSION=$(cat VERSION | sed -e 's/-.*//')
     elif [ $PACKAGE == container-storage-setup ]; then
