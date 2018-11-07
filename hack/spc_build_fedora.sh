@@ -18,7 +18,7 @@ set +x
 
 echo "Decrypting SSH private key..."
 cd $HOME/.ssh
-echo $DECRYPTION_PASSPHRASE | gpg --passphrase-fd 0 id_rsa.gpg
+openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
 echo "Setting correct permissions for SSH private key..."
 chmod 600 $HOME/.ssh/id_rsa
 
