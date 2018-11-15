@@ -26,14 +26,15 @@ bump_spec ()
         sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
         export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
         if [ $CURRENT_VERSION != $VERSION ]; then
-            echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
-            echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-            rpmdev-bumpspec -n $VERSION -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-            sed -i "s/Release: 1\%{?dist}/Release: 1.dev.git\%{shortcommit0}\%{?dist}/" $PACKAGE.spec
-            sed -i "s/$VERSION-1/$VERSION-1.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
+           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
+           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+           sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
+           sed -i "s/Release: [0-9]*.dev/Release: 1.dev/" $PACKAGE.spec
+           sed -i "s/$VERSION-1/$VERSION-1.nightly.git$SHORTCOMMIT/1" $PACKAGE.spec
+           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
         else
-            echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
         fi
     fi
 }
