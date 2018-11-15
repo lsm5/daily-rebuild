@@ -24,7 +24,7 @@ chmod 600 $HOME/.ssh/id_rsa
 
 # install deps
 echo "Updating image and deps..."
-sudo dnf -y update --best --allowerasing
+sudo dnf -y update --best --allowerasing --nogpgcheck
 
 echo "Fedora kerberos authentication..."
 echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
