@@ -110,8 +110,8 @@ download_from_brew ()
 send_to_openshift ()
 {
    pushd $RPM_DOWNLOAD_DIR
-   scp release-1.11/*.rpm openshift-mirror:/srv/enterprise/rhel/cri-o-tested/nightly/1.11/x86_64/os/Packages/
-   scp release-1.12/*.rpm openshift-mirror:/srv/enterprise/rhel/cri-o-tested/nightly/1.12/x86_64/os/Packages/
-   rm -rf release-1.11/*.rpm release-1.12/*.rpm
+   scp release-1.11/* openshift-mirror:/srv/enterprise/rhel/cri-o-tested/nightly/1.11/x86_64/os/Packages/
+   scp release-1.12/* openshift-mirror:/srv/enterprise/rhel/cri-o-tested/nightly/1.12/x86_64/os/Packages/
+   rm -rf release-1.11/* release-1.12/*
    popd
 }

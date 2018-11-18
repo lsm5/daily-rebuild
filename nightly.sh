@@ -4,7 +4,7 @@
 . common.sh
 
 bash builder.sh -p containernetworking-plugins -b master
-bash builder.sh -p runc -b master
+#bash builder.sh -p runc -b master
 bash builder.sh -p podman -b master
 bash builder.sh -p cri-o -b release-1.11
 bash builder.sh -p cri-o -b release-1.12
