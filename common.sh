@@ -13,6 +13,7 @@ cleanup_stale ()
    fi
    pushd $PKG_DIR/$PACKAGE
    git clean -dfx
+   rm -rf BUILD
    popd
 }
 
