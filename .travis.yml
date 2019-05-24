@@ -35,7 +35,7 @@ jobs:
             - env
             - echo "Building buildah in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide buildah"
-       - script:
+        - script:
             - env
             - echo "Building podman in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide podman"
