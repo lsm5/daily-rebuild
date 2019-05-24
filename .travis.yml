@@ -43,10 +43,10 @@ jobs:
             #- env
             #- echo "Building container-selinux in SPC using ./hack/run_build.sh"
             #- "./hack/run_build.sh fedora rawhide container-storage-setup"
-            #- script:
-            #- env
-            #- echo "Building podman in SPC using ./hack/run_build.sh"
-            #- "./hack/run_build.sh fedora rawhide podman"
+       - script:
+            - env
+            - echo "Building podman in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide podman"
             #- script:
             #- env
             #- echo "Building runc in SPC using ./hack/run_build.sh"
