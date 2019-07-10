@@ -38,6 +38,11 @@ jobs:
           name: buildah
         - script:
             - env
+            - echo "Building container-selinux in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide container-selinux"
+          name: container-selinux
+        - script:
+            - env
             - echo "Building containernetworking-plugins in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide containernetworking-plugins"
           name: containernetworking-plugins
