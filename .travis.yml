@@ -35,19 +35,24 @@ jobs:
             - env
             - echo "Building buildah in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide buildah"
+          name: buildah
         - script:
             - env
             - echo "Building containernetworking-plugins in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide containernetworking-plugins"
+          name: containernetworking-plugins
         - script:
             - env
             - echo "Building fuse-overlayfs in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide fuse-overlayfs"
+          name: fuse-overlayfs
         - script:
             - env
             - echo "Building podman in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide podman"
+          name: podman
         - script:
             - env
             - echo "Building slirp4netns in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide slirp4netns"
+          name: slirp4netns
