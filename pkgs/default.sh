@@ -16,9 +16,9 @@ fetch_version_and_commit ()
     # container-selinux  
     elif [ $PACKAGE == container-selinux ]; then
         export VERSION=$(cat VERSION)
-    # runc    
-    elif [ $PACKAGE == runc ]; then
-        export VERSION=$(cat VERSION | sed -e 's/-.*//')
+    # containernetworking-plugins
+    elif [ $PACKAGE == containernetworking-plugins ]; then
+        export VERSION=$(git describe --abbrev=0 --tags | sed -s 's/v//')
     # container-storage-setup
     elif [ $PACKAGE == container-storage-setup ]; then
         export MAJOR_VERSION=$(grep '_CSS_MAJOR_VERSION=' $PACKAGE.sh | sed -e 's/_CSS_MAJOR_VERSION=//' -e 's/"//g')
@@ -28,9 +28,12 @@ fetch_version_and_commit ()
     # fuse-overlayfs
     elif [ $PACKAGE == fuse-overlayfs ]; then
         export VERSION=$(grep 'AC_INIT' configure.ac | cut -b 28- | sed -e 's/].*//')
-    # containernetworking-plugins
-    elif [ $PACKAGE == containernetworking-plugins ]; then
-        export VERSION=$(git describe --abbrev=0 --tags | sed -s 's/v//')
+    # runc    
+    elif [ $PACKAGE == runc ]; then
+        export VERSION=$(cat VERSION | sed -e 's/-.*//')
+    # slirp4netns    
+    elif [ $PACKAGE == slirp4netns ]; then
+        export VERSION=$(grep AC_INIT configure.ac | cut -b 25- | sed -e 's/+dev.*//')
     else
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
     fi

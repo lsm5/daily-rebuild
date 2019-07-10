@@ -47,3 +47,7 @@ jobs:
             - env
             - echo "Building podman in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide podman"
+        - script:
+            - env
+            - echo "Building slirp4netns in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide slirp4netns"
