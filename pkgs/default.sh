@@ -21,6 +21,8 @@ fetch_version_and_commit ()
         export MINOR_VERSION=$(grep '_CSS_MINOR_VERSION=' $PACKAGE.sh | sed -e 's/_CSS_MINOR_VERSION=//' -e 's/"//g')
         export SUBLEVEL=$(grep '_CSS_SUBLEVEL=' $PACKAGE.sh | sed -e 's/_CSS_SUBLEVEL=//' -e 's/"//g')
         export VERSION=$MAJOR_VERSION.$MINOR_VERSION.$SUBLEVEL
+    elif [ $PACKAGE == fuse-overlayfs ]; then
+        export VERSION=$(grep 'AC_INIT' configure.ac | cut -b 28- | sed -e 's/].*//')
     else
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
     fi

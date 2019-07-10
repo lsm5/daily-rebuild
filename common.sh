@@ -10,6 +10,7 @@ cleanup_stale ()
     fi
     pushd $PKG_DIR/$PACKAGE
     git clean -dfx
+    rm -rf BUILD
     popd
 }
 
@@ -30,7 +31,7 @@ bump_spec ()
            echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
            sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
            sed -i "s/Release: [0-9]*.dev/Release: 0.1.dev/" $PACKAGE.spec
-           sed -i "s/$VERSION-1/$VERSION-1.nightly.git$SHORTCOMMIT/1" $PACKAGE.spec
+           sed -i "s/$VERSION-0.1/$VERSION-0.1.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
         else
            echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog

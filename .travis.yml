@@ -37,5 +37,9 @@ jobs:
             - "./hack/run_build.sh fedora rawhide buildah"
         - script:
             - env
+            - echo "Building fuse-overlayfs in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide fuse-overlayfs"
+        - script:
+            - env
             - echo "Building podman in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide podman"
