@@ -37,6 +37,10 @@ jobs:
             - "./hack/run_build.sh fedora rawhide buildah"
         - script:
             - env
+            - echo "Building containernetworking-plugins in SPC using ./hack/run_build.sh"
+            - "./hack/run_build.sh fedora rawhide containernetworking-plugins"
+        - script:
+            - env
             - echo "Building fuse-overlayfs in SPC using ./hack/run_build.sh"
             - "./hack/run_build.sh fedora rawhide fuse-overlayfs"
         - script:
