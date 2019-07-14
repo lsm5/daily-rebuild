@@ -10,8 +10,8 @@ before_script:
      - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
      - mkdir -p /home/lsm5-bot/repositories/pkgs
      - cd /home/lsm5-bot/repositories/rpm-builder
+     - git fetch --all
      - git checkout f30
-     - git pull
 
 stages:
      - build
