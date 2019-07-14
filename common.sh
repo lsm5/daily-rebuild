@@ -19,7 +19,8 @@ bump_spec ()
 {
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
-    git pull
+    git fetch --all
+    git rebase origin/$DIST_GIT_TAG
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
     if [ $COMMIT == $CURRENT_COMMIT ]; then
         echo "No change upstream since last build. Exiting..."
