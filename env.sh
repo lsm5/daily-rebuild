@@ -6,7 +6,7 @@ export DIST=$(rpm --eval %{?dist})
 export DISTRO="fedora"
 export DIST_PKG="fedpkg"
 export BUILDDEP="dnf builddep"
-export DIST_GIT_TAG="master"
+export DIST_GIT_TAG="f30"
 
 while getopts ":t:p:u:r:k:" opt; do
     case $opt in

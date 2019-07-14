@@ -6,24 +6,17 @@
 bump_spec ()
 {
     pushd $PKG_DIR/$PACKAGE
-    export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
-    if [ $COMMIT == $CURRENT_COMMIT ]; then
-        echo "No change upstream since last build. Exiting..."
-        exit 0
+    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
+    if [ $CURRENT_VERSION == $VERSION ]; then
+       echo "No new upstream release. Exiting..."
+       exit 0
     else
-        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
-        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
-        if [ $CURRENT_VERSION != $VERSION ]; then
-           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
-           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-           sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-           sed -i "s/Release: [0-9]*.dev/Release: 0.1.dev/" $PACKAGE.spec
-           sed -i "s/$VERSION-0.1/$VERSION-0.1.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
-           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-        else
-           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-        fi
+       sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
+       sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
+       sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
+       echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
+       echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+       rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
     fi
     popd
 }
@@ -32,7 +25,9 @@ bump_spec ()
 fetch_pkg_and_build ()
 {
    cd $PKG_DIR
-   $DIST_PKG clone $PACKAGE
+   if [ ! -d $PACKAGE ]; then
+      $DIST_PKG clone $PACKAGE
+   fi
    pushd $PKG_DIR/$PACKAGE
    git checkout $DIST_GIT_TAG
    bump_spec
@@ -67,5 +62,6 @@ push_and_build ()
         exit 1
     fi
     $DIST_PKG build
+    $DIST_PKG --password $FEDORA_KRB_PASSWORD update --type=bugfix --notes "Autobuilt v$VERSION"
     popd
 }

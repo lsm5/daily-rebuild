@@ -1,5 +1,5 @@
 ---
-image: registry.gitlab.com/lsm5/rpm-builder:latest
+image: registry.gitlab.com/lsm5/rpm-builder:f30
 
 before_script:
      - sudo dnf update --nogpgcheck -y
@@ -9,7 +9,7 @@ before_script:
      - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
      - mkdir -p $HOME/repositories/pkgs
      - cd $HOME/repositories/rpm-builder
-     - git checkout rawhide
+     - git checkout f30
      - git pull
      - git show HEAD
 
