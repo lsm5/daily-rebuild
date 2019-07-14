@@ -17,13 +17,11 @@ cleanup_stale ()
 # update spec changelog and release value
 bump_spec ()
 {
-    pushd $PKG_DIR/$PACKAGE
+    pushd $PKG_DIR
+    fedpkg clone $PACKAGE
+    pushd $PACKAGE
     git checkout $DIST_GIT_TAG
-    git fetch --all
-    git rebase origin/$DIST_GIT_TAG
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
-    echo "CURRENT COMMIT IN SPEC IS ..." $CURRENT_COMMIT
-    echo "CURRENT COMMIT UPSTREAM IS ..." $COMMIT
     if [ $COMMIT == $CURRENT_COMMIT ]; then
         echo "No change upstream since last build. Exiting..."
         exit 0
@@ -42,6 +40,7 @@ bump_spec ()
            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
         fi
     fi
+    popd
     popd
 }
 
