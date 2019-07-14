@@ -71,9 +71,7 @@ commit_to_dist_git ()
 push_and_build ()
 {
     pushd $PKG_DIR/$PACKAGE
-    echo "Pushing to" $DIST_GIT_TAG
     git push -u origin $DIST_GIT_TAG
-    echo "Checking git status ..."
     git status
     if [ $? -ne 0 ]; then
         echo "git push FAIL!!!"
