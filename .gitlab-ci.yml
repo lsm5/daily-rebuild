@@ -2,7 +2,7 @@
 image: registry.gitlab.com/lsm5/rpm-builder:latest
 
 before_script:
-     - dnf update --nogpgcheck -y
+     - sudo dnf update --nogpgcheck -y
      - cd $HOME/.ssh
      - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
      - chmod 600 id_rsa
