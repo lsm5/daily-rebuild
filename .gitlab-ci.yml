@@ -9,6 +9,7 @@ before_script:
      - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
      - mkdir -p $HOME/repositories/pkgs
      - cd $HOME/repositories/rpm-builder
+     - git checkout rawhide
      - git pull
      - git show HEAD
 
