@@ -4,13 +4,12 @@ image: registry.gitlab.com/lsm5/rpm-builder:f30
 before_script:
      - sudo dnf update --nogpgcheck -y
      - sudo su lsm5-bot
-     - export HOME=/home/lsm5-bot  
-     - cd $HOME/.ssh
+     - cd /home/lsm5-bot/.ssh
      - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
      - chmod 600 id_rsa
      - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
-     - mkdir -p $HOME/repositories/pkgs
-     - cd $HOME/repositories/rpm-builder
+     - mkdir -p /home/lsm5-bot/repositories/pkgs
+     - cd /home/lsm5-bot/repositories/rpm-builder
      - git checkout f30
      - git pull
 
