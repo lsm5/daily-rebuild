@@ -12,10 +12,31 @@ before_script:
 stages:
    - build
 
+buildah:
+   stage: build
+   script:
+     - bash builder.sh -t tagged -p buildah
+
+container-selinux:
+   stage: build
+   script:
+     - bash builder.sh -t tagged -p container-selinux
+
+containernetworking-plugins:
+   stage: build
+   script:
+     - bash builder.sh -t tagged -p containernetworking-plugins
+
 fuse-overlayfs:
    stage: build
    script:
      - bash builder.sh -t tagged -p fuse-overlayfs
+
+podman:
+   stage: build
+   script:
+     - bash builder.sh -t tagged -p podman
+
 
 slirp4netns:
    stage: build
