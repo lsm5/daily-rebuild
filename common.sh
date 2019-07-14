@@ -45,6 +45,7 @@ fetch_and_build ()
 {
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
+    git pull
     bump_spec
     spectool -g $PACKAGE.spec
     sudo $BUILDDEP $PACKAGE.spec -y
