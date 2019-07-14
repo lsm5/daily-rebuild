@@ -4,7 +4,7 @@
 . pkgs/default.sh
 fetch_version_and_commit
 . common.sh
-cleanup_stale
+#cleanup_stale
 fetch_and_build
 
 if [ $BUILDTYPE == "tagged" ]; then

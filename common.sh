@@ -2,24 +2,12 @@
 
 . env.sh
 
-# delete stale packages, tarballs and build dirs
-cleanup_stale ()
-{
-    if [ -f /tmp/$PACKAGE.changelog ]; then
-        rm /tmp/$PACKAGE.changelog
-    fi
-    pushd $PKG_DIR/$PACKAGE
-    git clean -dfx
-    rm -rf BUILD
-    popd
-}
-
 # update spec changelog and release value
 bump_spec ()
 {
-    pushd $PKG_DIR
-    fedpkg clone $PACKAGE
-    pushd $PACKAGE
+    cd $PKG_DIR
+    $DIST_PKG clone $PACKAGE
+    pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
     if [ $COMMIT == $CURRENT_COMMIT ]; then
@@ -40,7 +28,6 @@ bump_spec ()
            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
         fi
     fi
-    popd
     popd
 }
 
@@ -80,6 +67,6 @@ push_and_build ()
         echo "git push FAIL!!!"
         exit 1
     fi
-    fedpkg build
+    $DIST_PKG build
     popd
 }
