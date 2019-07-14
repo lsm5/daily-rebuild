@@ -13,7 +13,6 @@ before_script:
      - cd $HOME/repositories/rpm-builder
      - git checkout f30
      - git pull
-     - git show HEAD
 
 stages:
      - build
