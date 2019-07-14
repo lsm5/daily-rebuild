@@ -1,9 +1,9 @@
 ---
-image: registry.gitlab.com/lsm5/rpm-builder:f30
+image: registry.gitlab.com/lsm5/rpm-builder:latest
 
 before_script:
      - sudo dnf update --nogpgcheck -y
-     - sudo su lsm5-bot
+       #- sudo su lsm5-bot
      - cd /home/lsm5-bot/.ssh
      - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
      - chmod 600 id_rsa
