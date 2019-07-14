@@ -13,7 +13,7 @@ fuse-overlayfs:
      - mkdir -p $HOME/repositories/pkgs
      - cd $HOME/repositories/rpm-builder
      - git pull
-      - bash builder.sh -t tagged -p fuse-overlayfs
+     - bash builder.sh -t tagged -p fuse-overlayfs
 
 slirp4netns:
    stage: build
@@ -25,6 +25,6 @@ slirp4netns:
      - mkdir -p $HOME/repositories/pkgs
      - cd $HOME/repositories/rpm-builder
      - git pull
-      - bash builder.sh -t tagged -p slirp4netns
+     - bash builder.sh -t tagged -p slirp4netns
 
 
