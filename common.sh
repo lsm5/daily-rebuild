@@ -29,7 +29,7 @@ bump_spec ()
 }
 
 # rpmbuild
-fetch_and_build ()
+fetch_pkg_and_build ()
 {
    cd $PKG_DIR
    $DIST_PKG clone $PACKAGE
