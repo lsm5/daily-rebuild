@@ -1,7 +1,7 @@
 #!/bin/sh
 
-export REPO_DIR=~/repositories
-export PKG_DIR=~/repositories/pkgs
+export REPO_DIR=/home/lsm5-bot/repositories
+export PKG_DIR=/home/lsm5-bot/repositories/pkgs
 export DIST=$(rpm --eval %{?dist})
 export DISTRO="fedora"
 export DIST_PKG="fedpkg"

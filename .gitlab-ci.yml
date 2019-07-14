@@ -19,35 +19,29 @@ stages:
 buildah:
      stage: build
      script:
-          - sudo su lsm5-bot
           - bash builder.sh -t scratch -p buildah
 
 container-selinux:
      stage: build
      script:
-          - sudo su lsm5-bot
           - bash builder.sh -t scratch -p container-selinux
 
 containernetworking-plugins:
      stage: build
      script:
-          - sudo su lsm5-bot
           - bash builder.sh -t scratch -p containernetworking-plugins
 
 fuse-overlayfs:
      stage: build
      script:
-          - sudo su lsm5-bot
           - bash builder.sh -t scratch -p fuse-overlayfs
 
 podman:
      stage: build
      script:
-          - sudo su lsm5-bot
           - bash builder.sh -t scratch -p podman
 
 slirp4netns:
      stage: build
      script:
-          - sudo su lsm5-bot
           - bash builder.sh -t scratch -p slirp4netns
