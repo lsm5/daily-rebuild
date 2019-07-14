@@ -1,0 +1,16 @@
+image: registry.gitlab.com/lsm5/rpm-builder:latest
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+     - cd $HOME/.ssh
+     - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
+     - chmod 600 id_rsa
+     - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
+     - mkdir -p $HOME/repositories/pkgs
+     - cd $HOME/repositories/rpm-builder
+     - git pull
+     - bash builder.sh -t tagged -p slirp4netns
