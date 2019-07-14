@@ -22,6 +22,8 @@ bump_spec ()
     git fetch --all
     git rebase origin/$DIST_GIT_TAG
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
+    echo "CURRENT COMMIT IN SPEC IS ..." $CURRENT_COMMIT
+    echo "CURRENT COMMIT UPSTREAM IS ..." $COMMIT
     if [ $COMMIT == $CURRENT_COMMIT ]; then
         echo "No change upstream since last build. Exiting..."
         exit 0
