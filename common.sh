@@ -39,6 +39,7 @@ bump_spec ()
            rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
         fi
     fi
+    popd
 }
 
 # rpmbuild

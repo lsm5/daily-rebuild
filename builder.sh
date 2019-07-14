@@ -1,18 +1,8 @@
 #!/bin/sh
 
 . env.sh
-
-case "$PACKAGE" in
-    docker)
-        . pkgs/$PACKAGE.sh
-        ;;
-    *)
-        . pkgs/default.sh
-        ;;
-esac
-
+. pkgs/default.sh
 fetch_version_and_commit
-
 . common.sh
 cleanup_stale
 fetch_and_build
