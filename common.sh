@@ -19,6 +19,7 @@ bump_spec ()
 {
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
+    git pull
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
     if [ $COMMIT == $CURRENT_COMMIT ]; then
         echo "No change upstream since last build. Exiting..."
@@ -45,7 +46,6 @@ fetch_and_build ()
 {
     pushd $PKG_DIR/$PACKAGE
     git checkout $DIST_GIT_TAG
-    git pull
     bump_spec
     spectool -g $PACKAGE.spec
     sudo $BUILDDEP $PACKAGE.spec -y
