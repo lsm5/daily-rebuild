@@ -32,7 +32,9 @@ bump_spec ()
 fetch_pkg_and_build ()
 {
    cd $PKG_DIR
-   $DIST_PKG clone $PACKAGE
+   if [ ! -d $PACKAGE ]; then
+      $DIST_PKG clone $PACKAGE
+   fi
    pushd $PKG_DIR/$PACKAGE
    git checkout $DIST_GIT_TAG
    bump_spec
