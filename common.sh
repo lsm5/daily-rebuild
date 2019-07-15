@@ -62,6 +62,6 @@ push_and_build ()
         exit 1
     fi
     $DIST_PKG build
-    $DIST_PKG --password $FEDORA_KRB_PASSWORD update --type=bugfix --notes "Autobuilt v$VERSION"
+    echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt v$VERSION"
     popd
 }
