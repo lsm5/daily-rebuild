@@ -12,6 +12,7 @@ before_script:
      - cd /home/lsm5-bot/repositories/rpm-builder
      - git fetch --all
      - git checkout f30
+     - git pull
 
 stages:
      - build
