@@ -19,29 +19,29 @@ stages:
 buildah:
      stage: build
      script:
-          - bash builder.sh -t scratch -p buildah
+          - bash builder.sh -t tagged -p buildah
 
 container-selinux:
      stage: build
      script:
-          - bash builder.sh -t scratch -p container-selinux
+          - bash builder.sh -t tagged -p container-selinux
 
 containernetworking-plugins:
      stage: build
      script:
-          - bash builder.sh -t scratch -p containernetworking-plugins
+          - bash builder.sh -t tagged -p containernetworking-plugins
 
 fuse-overlayfs:
      stage: build
      script:
-          - bash builder.sh -t scratch -p fuse-overlayfs
+          - bash builder.sh -t tagged -p fuse-overlayfs
 
 podman:
      stage: build
      script:
-          - bash builder.sh -t scratch -p podman
+          - bash builder.sh -t tagged -p podman
 
 slirp4netns:
      stage: build
      script:
-          - bash builder.sh -t scratch -p slirp4netns
+          - bash builder.sh -t tagged -p slirp4netns
