@@ -63,5 +63,10 @@ push_and_build ()
     fi
     $DIST_PKG build
     echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt v$VERSION"
+    rm -rf SRPMS/*
+    # build for CentOS Virt SIG
+    rpmbuild -ba --define='dist .el7' $PACKAGE.spec
+    cbs build virt7-container-common-el7 SRPMS/*
+    cbs tag-pkg virt7-container-common-testing $PACKAGE-$NVR.el7
     popd
 }
