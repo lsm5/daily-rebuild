@@ -2,21 +2,6 @@
 
 . env.sh
 
-# delete stale packages, tarballs and build dirs
-cleanup_stale ()
-{
-   if [ -f /tmp/$PACKAGE.changelog ]; then
-      rm /tmp/$PACKAGE.changelog
-   fi
-   if [ -f /tmp/$PACKAGE-brewlog.txt ]; then
-      rm /tmp/$PACKAGE-brewlog.txt
-   fi
-   pushd $PKG_DIR/$PACKAGE
-   git clean -dfx
-   rm -rf BUILD
-   popd
-}
-
 # update spec changelog and release value
 bump_spec ()
 {
@@ -44,7 +29,7 @@ bump_spec ()
 }
 
 # rpmbuild
-fetch_and_build ()
+fetch_pkg_and_build ()
 {
    pushd $PKG_DIR/$PACKAGE
    git checkout $DIST_GIT_BRANCH

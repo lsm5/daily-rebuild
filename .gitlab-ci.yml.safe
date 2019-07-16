@@ -1,0 +1,46 @@
+---
+image: registry.gitlab.com/lsm5/rpm-builder:latest
+
+before_script:
+     - sudo dnf update --nogpgcheck -y
+     - cd $HOME/.ssh
+     - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
+     - chmod 600 id_rsa
+     - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
+     - mkdir -p $HOME/repositories/pkgs
+     - cd $HOME/repositories/rpm-builder
+     - git checkout rawhide
+     - git pull
+
+stages:
+     - 1.11
+     - 1.12
+     - 1.13
+     - 1.14
+     - 1.15
+
+1.11:
+     stage: 1.11
+     script:
+          - bash builder.sh -t tagged -p cri-o
+
+1.12:
+     stage: 1.12
+     script:
+          - bash builder.sh -t tagged -p cri-o
+
+1.13:
+     stage: 1.13
+     script:
+          - bash builder.sh -t tagged -p cri-o
+
+1.14:
+     stage: 1.14
+     script:
+          - bash builder.sh -t tagged -p cri-o
+
+1.15:
+     stage: 1.15
+     script:
+          - bash builder.sh -t tagged -p cri-o
+
