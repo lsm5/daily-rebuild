@@ -11,6 +11,7 @@ bump_spec ()
        echo "No new upstream release. Exiting..."
        exit 0
     else
+       sudo dnf update --nogpgcheck -y
        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
        sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
        sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
