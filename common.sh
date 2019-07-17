@@ -8,22 +8,23 @@ bump_spec ()
     pushd $PKG_DIR/$PACKAGE
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
     if [ $COMMIT == $CURRENT_COMMIT ]; then
-        echo "No change upstream since last build. Exiting..."
-        exit 0
+       echo "No change upstream since last build. Exiting..."
+       exit 0
     else
-        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
-        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
-        if [ $CURRENT_VERSION != $VERSION ]; then
-           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
-           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-           sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-           sed -i "s/Release: [0-9]*.dev/Release: 0.1.dev/" $PACKAGE.spec
-           sed -i "s/$VERSION-0.1/$VERSION-0.1.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
-           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-        else
-           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-        fi
+       sudo dnf update --nogpgcheck -y
+       sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
+       export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
+       if [ $CURRENT_VERSION != $VERSION ]; then
+          echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
+          echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+          sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
+          sed -i "s/Release: [0-9]*.dev/Release: 0.1.dev/" $PACKAGE.spec
+          sed -i "s/$VERSION-0.1/$VERSION-0.1.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
+          rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+       else
+          echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+          rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+       fi
     fi
     popd
 }
