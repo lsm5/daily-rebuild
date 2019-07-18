@@ -15,7 +15,7 @@ fetch_version_and_commit ()
         export VERSION=$(grep 'Version =' buildah.go | sed -e 's/\tVersion = //' -e 's/"//g' -e 's/-.*//')
     # container-selinux  
     elif [ $PACKAGE == container-selinux ]; then
-        export VERSION=$(cat VERSION)
+        export VERSION=$(grep policy_module container.te | cut -b 26- | sed -e 's/)//')
     # containernetworking-plugins
     elif [ $PACKAGE == containernetworking-plugins ]; then
         export VERSION=$(git describe --abbrev=0 --tags | sed -s 's/v//')
