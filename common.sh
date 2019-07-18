@@ -43,6 +43,7 @@ fetch_pkg_and_build ()
    spectool -g $PACKAGE.spec
    sudo $BUILDDEP $PACKAGE.spec -y
    rpmbuild -ba $PACKAGE.spec
+   git diff
    if [ $? -ne 0 ]; then
        echo "rpm build FAIL!!!"
        exit 1
