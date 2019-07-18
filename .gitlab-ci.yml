@@ -2,15 +2,15 @@
 image: registry.gitlab.com/lsm5/rpm-builder:latest
 
 before_script:
-     - cd /home/lsm5-bot
+     - cd ~
      - openssl enc -aes-256-cbc -pbkdf2 -d -in .centos.cert.enc -out .centos.cert -pass pass:$DECRYPTION_PASSPHRASE
      - openssl enc -aes-256-cbc -pbkdf2 -d -in .centos-server-ca.cert.enc -out .centos-server-ca.cert -pass pass:$DECRYPTION_PASSPHRASE
-     - cd /home/lsm5-bot/.ssh
+     - cd ~/.ssh
      - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
      - chmod 600 id_rsa
      - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
-     - mkdir -p /home/lsm5-bot/repositories/pkgs
-     - cd /home/lsm5-bot/repositories/rpm-builder
+     - mkdir -p ~/repositories/pkgs
+     - cd ~/repositories/rpm-builder
      - git fetch --all
      - git checkout f30
      - git pull

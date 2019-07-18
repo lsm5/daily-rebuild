@@ -12,11 +12,19 @@ bump_spec ()
        exit 0
     else
        sudo dnf update --nogpgcheck -y
-       sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
+       sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
+       if [ $PACKAGE == container-selinux ]; then
+          sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
+       fi
        sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-       sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
+       sed -i "s/Release: [0-9]*/Release: 0/" $PACKAGE.spec
        echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
-       echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+       if [ $PACKAGE == container-selinux ]; then
+          echo "- autobuilt $SHORTCOMMIT for fedora" >> /tmp/$PACKAGE.changelog
+          echo "- autobuilt $SHORTCOMMIT_CENTOS for centos" >> /tmp/$PACKAGE.changelog
+       else
+          echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+       fi
        rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
     fi
     popd
