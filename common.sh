@@ -14,6 +14,12 @@ bump_spec ()
        sudo dnf update --nogpgcheck -y
        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
+       
+       # cleanup previous /tmp changelog entries
+       if [ -f /tmp/$PACKAGE.changelog ]; then
+          rm -f /tmp/$PACKAGE.changelog
+       fi
+       
        if [ $CURRENT_VERSION != $VERSION ]; then
           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
