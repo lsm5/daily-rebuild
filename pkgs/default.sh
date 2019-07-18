@@ -9,8 +9,7 @@ fetch_version_and_commit ()
     git fetch origin
     git checkout origin/master
     if [ $PACKAGE == container-selinux ]; then
-       export VERSION=$(cat VERSION)
-       echo "VERSION FILE SAYS...." $VERSION
+       export VERSION=$(grep policy_module container.te | cut -b 26- | sed -e 's/)//')
        export COMMIT=$(git show --pretty=%H -s origin/master)
        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
        export COMMIT_CENTOS=$(git show --pretty=%H -s origin/RHEL7.5)
