@@ -14,6 +14,7 @@ bump_spec ()
        sudo dnf update --nogpgcheck -y
        sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
        if [ $PACKAGE == container-selinux ]; then
+          sed -i "0,/\%global commit_centos.*/{s/\%global commit_centos.*/\%global commit_centos $COMMIT_CENTOS/}" $PACKAGE.spec
           sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
        fi
        sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
