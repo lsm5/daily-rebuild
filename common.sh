@@ -77,7 +77,9 @@ push_and_build ()
     rpmbuild -ba --define='dist .el7' $PACKAGE.spec
     # remove epoch from NVR for centos builds
     export CENTOS_NVR=$(echo $NVR | sed -e 's/[^:]*://')
-    cbs build virt7-container-common-el7 SRPMS/*
-    cbs tag-pkg virt7-container-common-testing $PACKAGE-$CENTOS_NVR.el7
+    cbs build virt7-container-common-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
+    if [ $? -ne 0 ]; then
+       cbs tag-pkg virt7-container-common-testing $PACKAGE-$CENTOS_NVR.el7
+    fi
     popd
 }
