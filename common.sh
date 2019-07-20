@@ -10,6 +10,7 @@ bump_spec ()
       $DIST_PKG clone $PACKAGE
    fi
    pushd $PKG_DIR/$PACKAGE
+   git checkout $DIST_GIT_TAG
    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
    if [ $CURRENT_VERSION == $VERSION ]; then
       echo "No new upstream release. Exiting..."
