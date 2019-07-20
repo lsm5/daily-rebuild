@@ -43,7 +43,7 @@ fetch_pkg_and_build ()
    bump_spec
    spectool -g $PACKAGE.spec
    sudo $BUILDDEP $PACKAGE.spec -y
-   rpmbuild -ba $PACKAGE.spec
+   rpmbuild -br --quiet $PACKAGE.spec
    if [ $? -ne 0 ]; then
        echo "rpm build FAIL!!!"
        exit 1
@@ -75,10 +75,10 @@ push_and_build ()
     echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt v$VERSION"
     rm -rf SRPMS/*
     # build for CentOS Virt SIG
-    rpmbuild -ba --define='dist .el7' $PACKAGE.spec
+    rpmbuild -br --quiet --define='dist .el7' $PACKAGE.spec
     # remove epoch from NVR for centos builds
     export CENTOS_NVR=$(echo $NVR | sed -e 's/[^:]*://')
-    cbs build virt7-container-common-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
+    cbs build --wait virt7-container-common-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
     if [ $? -ne 0 ]; then
        cbs tag-pkg virt7-container-common-testing $PACKAGE-$CENTOS_NVR.el7
     fi
