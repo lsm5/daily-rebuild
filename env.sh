@@ -3,6 +3,7 @@
 export REPO_DIR=~/repositories
 export PKG_DIR=~/repositories/pkgs
 export MODULE_DIR=~/repositories/modules
+export MODULE=cri-o
 export DIST=$(rpm --eval %{?dist})
 export DISTRO="fedora"
 export DIST_PKG="fedpkg"
