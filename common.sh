@@ -5,12 +5,6 @@
 # update spec changelog and release value
 bump_spec ()
 {
-   cd $PKG_DIR
-   if [ ! -d $PACKAGE ]; then
-      $DIST_PKG clone $PACKAGE
-   fi
-   pushd $PKG_DIR/$PACKAGE
-   git checkout $DIST_GIT_TAG
    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
    if [ $CURRENT_VERSION == $VERSION ]; then
       echo "No new upstream release. Exiting..."
@@ -33,7 +27,6 @@ bump_spec ()
       fi
       rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
    fi
-   popd
 }
 
 # rpmbuild
@@ -43,7 +36,7 @@ fetch_pkg_and_build ()
    if [ ! -d $PACKAGE ]; then
       $DIST_PKG clone $PACKAGE
    fi
-   pushd $PKG_DIR/$PACKAGE
+   cd $PKG_DIR/$PACKAGE
    git checkout $DIST_GIT_TAG
    bump_spec
    spectool -g $PACKAGE.spec
@@ -53,7 +46,6 @@ fetch_pkg_and_build ()
        echo "rpm build FAIL!!!"
        exit 1
    fi
-   popd
 }
 
 # update dist-git
