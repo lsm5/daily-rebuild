@@ -5,17 +5,12 @@
 # fetch version and commit info
 fetch_version_and_commit ()
 {
-    pushd $REPO_DIR/$PACKAGE
-    git fetch origin
-    git checkout origin/$UPSTREAM_BRANCH
-    export COMMIT=$(git show --pretty=%H -s origin/$UPSTREAM_BRANCH)
-    export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
-    if [[ $PACKAGE == cri-tools || $PACKAGE == containernetworking-plugins ]]; then
-        export VERSION=$(git describe --tags --dirty --always | sed -e 's/v//' -e 's/-.*//')
-    elif [[ $PACKAGE == runc ]]; then
-        export VERSION=$(cat VERSION | sed -e 's/-.*//')
-    else
-        export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
-    fi
-    popd
+       pushd $REPO_DIR/$PACKAGE
+       git fetch origin
+       git checkout origin/$UPSTREAM_BRANCH
+       export LATEST_TAG=$(git describe --tags --abbrev=0)
+       export VERSION=$(echo $LATEST_TAG | sed -e 's/v//')
+       export COMMIT=$(git show --pretty=%H -s $(echo $LATEST_TAG))
+       export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
+       popd
 }

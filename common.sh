@@ -6,31 +6,29 @@
 bump_spec ()
 {
    pushd $PKG_DIR/$PACKAGE
-   git checkout $DIST_GIT_BRANCH
-   export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
-   if [ $COMMIT == $CURRENT_COMMIT ]; then
-      echo "No change upstream since last build. Exiting..."
-      exit 0
-   else
-      sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
-      export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
-      # cleanup previous /tmp changelog entries
-      if [ -f /tmp/$PACKAGE.changelog ]; then
-         rm -f /tmp/$PACKAGE.changelog
-      fi
-
-      if [ $CURRENT_VERSION != $VERSION ]; then
-         echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
-         echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-         sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-         sed -i "s/Release: [0-9]*.dev/Release: 0.0.dev/" $PACKAGE.spec
-         sed -i "s/$VERSION-0.0/$VERSION-0.0.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
-         rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-      else
-         echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-         rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-      fi
-   fi
+    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
+    if [ $CURRENT_VERSION == $VERSION ]; then
+       echo "No new upstream release. Exiting..."
+       exit 0
+    else
+       sudo dnf update --nogpgcheck -y
+       sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
+       if [ $PACKAGE == container-selinux ]; then
+          sed -i "0,/\%global commit_centos.*/{s/\%global commit_centos.*/\%global commit_centos $COMMIT_CENTOS/}" $PACKAGE.spec
+          sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
+       fi
+       sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
+       sed -i "s/Release: [0-9]*/Release: 0/" $PACKAGE.spec
+       echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
+       if [ $PACKAGE == container-selinux ]; then
+          echo "- autobuilt $SHORTCOMMIT for fedora" >> /tmp/$PACKAGE.changelog
+          echo "- autobuilt $SHORTCOMMIT_CENTOS for centos" >> /tmp/$PACKAGE.changelog
+       else
+          echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+       fi
+       rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+    fi
+    popd
 }
 
 # rpmbuild
@@ -72,5 +70,24 @@ push_and_build ()
        echo "git push FAIL!!!"
        exit 1
    fi
+   rm -rf SRPMS/*
+   # build for CentOS PaaS SIG
+   rpmbuild -ba --define='dist .el7' $PACKAGE.spec
+   # remove epoch from NVR for CentOS builds
+   export CENTOS_NVR=$(echo $NVR | sed -e 's/[^:]*://')
+   cbs build paas7-crio-$CENTOS_SIG_TAG-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
+   if [ $? -ne 0 ]; then
+      cbs tag-pkg paas7-crio-$CENTOS_SIG_TAG-testing $PACKAGE-$CENTOS_NVR.el7
+   fi
    popd
+   # build fedora module
+   cd $MODULE_DIR
+   if [ ! -d $MODULE ]; then
+      $DIST_PKG clone modules/$MODULE
+   fi
+   cd $MODULE_DIR/$MODULE
+   git checkout $DIST_GIT_TAG
+   git commit --allow-empty -asm 'autobuild latest'
+   git push -u origin $DIST_GIT_TAG
+   $DIST_PKG module-build
 }

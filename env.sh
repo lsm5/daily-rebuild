@@ -23,13 +23,14 @@ while getopts ":b:p:t:" opt; do
 done
 
 if [[ $UPSTREAM_BRANCH == release-1.11 ]]; then
-   export DIST_GIT_BRANCH=1.11
+   export DIST_GIT_TAG=1.11
 elif [[ $UPSTREAM_BRANCH == release-1.12 ]]; then
-   export DIST_GIT_BRANCH=1.12
+   export DIST_GIT_TAG=1.12
 elif [[ $UPSTREAM_BRANCH == release-1.13 ]]; then
-   export DIST_GIT_BRANCH=1.13
+   export DIST_GIT_TAG=1.13
 elif [[ $UPSTREAM_BRANCH == release-1.14 ]]; then
-   export DIST_GIT_BRANCH=1.14
+   export DIST_GIT_TAG=1.14
 elif [[ $UPSTREAM_BRANCH == release-1.15 ]]; then
-   export DIST_GIT_BRANCH=1.15
+   export DIST_GIT_TAG=1.15
 fi
+export CENTOS_SIG_TAG=$(echo $DIST_GIT_TAG | sed -e 's/\.//')
