@@ -41,7 +41,7 @@ fetch_pkg_and_build ()
    bump_spec
    spectool -g $PACKAGE.spec
    sudo $BUILDDEP -y $PACKAGE.spec
-   rpmbuild -ba $PACKAGE.spec
+   rpmbuild -br --quiet $PACKAGE.spec
    if [ $? -ne 0 ]; then
        echo "rpm build FAIL!!!"
        exit 1
@@ -69,10 +69,10 @@ push_and_build ()
    fi
    rm -rf SRPMS/*
    # build for CentOS PaaS SIG
-   rpmbuild -ba --define='dist .el7' $PACKAGE.spec
+   rpmbuild -br --quiet --define='dist .el7' $PACKAGE.spec
    # remove epoch from NVR for CentOS builds
    export CENTOS_NVR=$(echo $NVR | sed -e 's/[^:]*://')
-   cbs build paas7-crio-$CENTOS_SIG_TAG-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
+   cbs build --wait paas7-crio-$CENTOS_SIG_TAG-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
    if [ $? -ne 0 ]; then
       cbs tag-pkg paas7-crio-$CENTOS_SIG_TAG-testing $PACKAGE-$CENTOS_NVR.el7
    fi
@@ -84,7 +84,7 @@ push_and_build ()
    fi
    cd $MODULE_DIR/$MODULE
    git checkout $DIST_GIT_TAG
-   git commit --allow-empty -asm 'autobuild latest'
+   git commit --allow-empty -asm 'autobuilt latest'
    git push -u origin $DIST_GIT_TAG
    $DIST_PKG module-build
 }
