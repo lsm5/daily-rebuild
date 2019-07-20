@@ -11,7 +11,7 @@ before_script:
      - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
      - mkdir -p ~/repositories/pkgs
      - cd ~/repositories/rpm-builder
-     - git checkout rawhide
+     - git checkout cri-o
      - git pull
 
 stages:
