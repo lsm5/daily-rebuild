@@ -2,23 +2,34 @@
 
 export REPO_DIR=~/repositories
 export PKG_DIR=~/repositories/pkgs
-export RPM_DOWNLOAD_DIR=~/repositories/rpm-downloads
+export MODULE_DIR=~/repositories/modules
+export DIST=$(rpm --eval %{?dist})
+export DISTRO="fedora"
+export DIST_PKG="fedpkg"
+export BUILDDEP="dnf builddep"
 
-while getopts ":p:b:k:" opt; do
+while getopts ":b:p:t:" opt; do
     case $opt in
+        b)
+            export UPSTREAM_BRANCH=$OPTARG
+            ;;
         p)
             export PACKAGE=$OPTARG
             ;;
-        b)
-            export UPSTREAM_BRANCH=$OPTARG
+        t)
+            export BUILDTYPE=$OPTARG
             ;;
     esac
 done
 
-if [[ $UPSTREAM_BRANCH == release-1.14 ]]; then
-   export DIST_GIT_BRANCH=rhaos-4.2-rhel-8
-   export BREW_TAG=rhaos-4.2-rhel-8-candidate
-#else
-#   export DIST_GIT_BRANCH=private-staging-rhaos-4.0-rhel-7
-#   export BREW_TAG=rhaos-4.0-rhel-7-candidate
+if [[ $UPSTREAM_BRANCH == release-1.11 ]]; then
+   export DIST_GIT_BRANCH=1.11
+elif [[ $UPSTREAM_BRANCH == release-1.12 ]]; then
+   export DIST_GIT_BRANCH=1.12
+elif [[ $UPSTREAM_BRANCH == release-1.13 ]]; then
+   export DIST_GIT_BRANCH=1.13
+elif [[ $UPSTREAM_BRANCH == release-1.14 ]]; then
+   export DIST_GIT_BRANCH=1.14
+elif [[ $UPSTREAM_BRANCH == release-1.15 ]]; then
+   export DIST_GIT_BRANCH=1.15
 fi

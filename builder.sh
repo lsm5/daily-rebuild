@@ -10,4 +10,3 @@ if [ $BUILDTYPE == "tagged" ]; then
     commit_to_dist_git
     push_and_build
 fi
-

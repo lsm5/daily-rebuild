@@ -1,0 +1,44 @@
+---
+image: registry.gitlab.com/lsm5/rpm-builder:latest
+
+before_script:
+     - cd ~
+     - openssl enc -aes-256-cbc -pbkdf2 -d -in .centos.cert.enc -out .centos.cert -pass pass:$DECRYPTION_PASSPHRASE
+     - openssl enc -aes-256-cbc -pbkdf2 -d -in .centos-server-ca.cert.enc -out .centos-server-ca.cert -pass pass:$DECRYPTION_PASSPHRASE
+     - cd ~/.ssh
+     - openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
+     - chmod 600 id_rsa
+     - echo $FEDORA_KRB_PASSWORD | kinit lsm5@FEDORAPROJECT.ORG
+     - mkdir -p ~/repositories/pkgs
+     - cd ~/repositories/rpm-builder
+     - git checkout rawhide
+     - git pull
+
+stages:
+   - build
+
+1.11:
+     stage: build
+     script:
+          - bash builder.sh -t scratch -p cri-o -b release-1.11
+
+1.12:
+     stage: build
+     script:
+          - bash builder.sh -t scratch -p cri-o -b release-1.12
+
+1.13:
+     stage: build
+     script:
+          - bash builder.sh -t scratch -p cri-o -b release-1.13
+
+1.14:
+     stage: build
+     script:
+          - bash builder.sh -t scratch -p cri-o -b release-1.14
+
+1.15:
+     stage: build
+     script:
+          - bash builder.sh -t scratch -p cri-o -b release-1.15
+
