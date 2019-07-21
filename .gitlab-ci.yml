@@ -43,6 +43,11 @@ podman:
      script:
           - bash builder.sh -t tagged -p podman
 
+skopeo:
+     stage: build
+     script:
+          - bash builder.sh -t tagged -p skopeo
+
 slirp4netns:
      stage: build
      script:
