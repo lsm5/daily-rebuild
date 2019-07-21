@@ -14,12 +14,10 @@ bump_spec ()
        sudo dnf update --nogpgcheck -y
        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
-       
        # cleanup previous /tmp changelog entries
        if [ -f /tmp/$PACKAGE.changelog ]; then
           rm -f /tmp/$PACKAGE.changelog
        fi
-       
        if [ $CURRENT_VERSION != $VERSION ]; then
           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
@@ -47,7 +45,7 @@ fetch_pkg_and_build ()
    bump_spec
    spectool -g $PACKAGE.spec
    sudo $BUILDDEP $PACKAGE.spec -y
-   rpmbuild -ba $PACKAGE.spec
+   rpmbuild -br --quiet $PACKAGE.spec
    if [ $? -ne 0 ]; then
        echo "rpm build FAIL!!!"
        exit 1
