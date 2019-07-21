@@ -22,6 +22,10 @@ bump_spec ()
           bodhi updates request --user lsm5 --password $FEDORA_KRB_PASSWORD $BODHI_ID stable
           if [ $? -ne 0 ]; then
              echo "Build in updates-testing not qualified for stable push yet"
+          else
+             # Push CentOS build to -release branch as well
+             export CURRENT_CENTOS_TESTING_BUILD=$(echo $CURRENT_TESTING_BUILD | sed -e "s/$KOJI_BUILD_SUFFIX/\.el7/")
+             cbs tag-pkg virt7-container-common-release $CURRENT_CENTOS_TESTING_BUILD
           fi
        fi
        sudo dnf update --nogpgcheck -y
