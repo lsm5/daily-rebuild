@@ -11,6 +11,19 @@ bump_spec ()
        echo "No new upstream release. Exiting..."
        exit 0
     else
+       # Before building a new package check if any new builds in
+       # updates-testing can be pushed to stable
+       export CURRENT_STABLE_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates $PACKAGE | awk '{print $1}')
+       export CURRENT_TESTING_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-testing $PACKAGE | awk '{print $1}')
+       if [ $CURRENT_STABLE_BUILD != $CURRENT_TESTING_BUILD ]; then
+          # Try submitting testing build to stable
+          # Get Bodhi ID
+          export BODHI_ID=$(bodhi updates query --packages $PACKAGE --releases $DIST_GIT_TAG --status testing | grep 'Update ID' | sed -e 's/   Update ID: //')
+          bodhi updates request --user lsm5 --password $FEDORA_KRB_PASSWORD $BODHI_ID stable
+          if [ $? -ne 0 ]; then
+             echo "Build in updates-testing not qualified for stable push yet"
+          fi
+       fi
        sudo dnf update --nogpgcheck -y
        sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
        if [ $PACKAGE == container-selinux ]; then
