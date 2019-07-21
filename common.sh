@@ -6,28 +6,27 @@
 bump_spec ()
 {
     pushd $PKG_DIR/$PACKAGE
+    # Check if any new builds in updates-testing can be pushed to stable
+    export CURRENT_STABLE_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates $PACKAGE | awk '{print $1}')
+    export CURRENT_TESTING_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-testing $PACKAGE | awk '{print $1}')
+    if [ $CURRENT_STABLE_BUILD != $CURRENT_TESTING_BUILD ]; then
+       # Try submitting testing build to stable
+       # Get Bodhi ID
+       export BODHI_ID=$(bodhi updates query --packages $PACKAGE --releases $DIST_GIT_TAG --status testing | grep 'Update ID' | sed -e 's/   Update ID: //')
+       bodhi updates request --user lsm5 --password $FEDORA_KRB_PASSWORD $BODHI_ID stable
+       if [ $? -ne 0 ]; then
+          echo "Build in updates-testing not qualified for stable push yet"
+       else
+          # Push CentOS build to -release branch since Fedora build qualified
+          export CURRENT_CENTOS_TESTING_BUILD=$(echo $CURRENT_TESTING_BUILD | sed -e "s/$KOJI_BUILD_SUFFIX/\.el7/")
+          cbs tag-pkg virt7-container-common-release $CURRENT_CENTOS_TESTING_BUILD
+       fi
+    fi
     export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
     if [ $CURRENT_VERSION == $VERSION ]; then
        echo "No new upstream release. Exiting..."
        exit 0
     else
-       # Before building a new package check if any new builds in
-       # updates-testing can be pushed to stable
-       export CURRENT_STABLE_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates $PACKAGE | awk '{print $1}')
-       export CURRENT_TESTING_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-testing $PACKAGE | awk '{print $1}')
-       if [ $CURRENT_STABLE_BUILD != $CURRENT_TESTING_BUILD ]; then
-          # Try submitting testing build to stable
-          # Get Bodhi ID
-          export BODHI_ID=$(bodhi updates query --packages $PACKAGE --releases $DIST_GIT_TAG --status testing | grep 'Update ID' | sed -e 's/   Update ID: //')
-          bodhi updates request --user lsm5 --password $FEDORA_KRB_PASSWORD $BODHI_ID stable
-          if [ $? -ne 0 ]; then
-             echo "Build in updates-testing not qualified for stable push yet"
-          else
-             # Push CentOS build to -release branch as well
-             export CURRENT_CENTOS_TESTING_BUILD=$(echo $CURRENT_TESTING_BUILD | sed -e "s/$KOJI_BUILD_SUFFIX/\.el7/")
-             cbs tag-pkg virt7-container-common-release $CURRENT_CENTOS_TESTING_BUILD
-          fi
-       fi
        sudo dnf update --nogpgcheck -y
        sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
        if [ $PACKAGE == container-selinux ]; then
