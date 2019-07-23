@@ -27,7 +27,7 @@ fetch_version_and_commit ()
         export VERSION=$(cat VERSION | sed -e 's/-.*//')
     # slirp4netns    
     elif [ $PACKAGE == slirp4netns ]; then
-        export VERSION=$(grep AC_INIT configure.ac | cut -b 25- | sed -e 's/+dev.*//')
+        export VERSION=$(grep AC_INIT configure.ac | cut -b 25- | sed -e 's/+dev.*//' -e 's/-.*//' )
     else
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
     fi
