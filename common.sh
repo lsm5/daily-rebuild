@@ -22,7 +22,7 @@ bump_spec ()
           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
           sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-          sed -i "s/Release: [0-9]*.dev/Release: 0.0.dev/" $PACKAGE.spec
+          sed -i "s/Release: [0-9.]*dev/Release: 0.0.dev/" $PACKAGE.spec
           sed -i "s/$VERSION-0.0/$VERSION-0.0.dev.git$SHORTCOMMIT/1" $PACKAGE.spec
           rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
        else
