@@ -16,8 +16,9 @@ fetch_version_and_commit ()
        export SHORTCOMMIT_CENTOS=$(c=$COMMIT_CENTOS; echo ${c:0:7})
     else
        export LATEST_TAG=$(git describe --tags --abbrev=0)
-       export VERSION=$(echo $LATEST_TAG | sed -e 's/v//')
-       export COMMIT=$(git show --pretty=%H -s $(echo $LATEST_TAG))
+       git checkout $LATEST_TAG
+       export VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
+       export COMMIT=$(git rev-parse HEAD)
        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
     fi
     popd
