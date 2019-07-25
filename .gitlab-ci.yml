@@ -38,7 +38,7 @@ cri-o-1.14:
      script:
           - bash builder.sh -t tagged -p cri-o -b release-1.14
 
-            #cri-o-1.15:
-            #stage: build
-            #script:
-            #- bash builder.sh -t tagged -p cri-o -b release-1.15
+cri-o-1.15:
+     stage: build
+     script:
+          - bash builder.sh -t tagged -p cri-o -b release-1.15
