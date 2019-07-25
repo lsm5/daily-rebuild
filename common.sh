@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. env.sh
+. $(pwd)/env.sh
 
 # update spec changelog and release value
 bump_spec ()
@@ -36,7 +36,7 @@ bump_spec ()
 # rpmbuild
 fetch_pkg_and_build ()
 {
-   cd $PKG_DIR
+   pushd $PKG_DIR
    if [ ! -d $PACKAGE ]; then
       $DIST_PKG clone $PACKAGE
    fi

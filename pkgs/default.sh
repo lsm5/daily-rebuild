@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. env.sh
+. $(pwd)/env.sh
 
 # fetch version and commit info
 fetch_version_and_commit ()

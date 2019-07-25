@@ -1,9 +1,9 @@
 #!/bin/sh
 
-. env.sh
-. pkgs/default.sh
+. $(pwd)/env.sh
+. $(pwd)/pkgs/default.sh
 fetch_version_and_commit
-. common.sh
+. $(pwd)/common.sh
 fetch_pkg_and_build
 
 if [ $BUILDTYPE == "tagged" ]; then
