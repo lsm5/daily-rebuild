@@ -21,24 +21,24 @@ stages:
 cri-o-1.11:
      stage: build
      script:
-          - bash builder.sh -t tagged -p cri-o -b release-1.11
+          - bash builder.sh -t scratch -p cri-o -b release-1.11
 
 cri-o-1.12:
      stage: build
      script:
-          - bash builder.sh -t tagged -p cri-o -b release-1.12
+          - bash builder.sh -t scratch -p cri-o -b release-1.12
 
 cri-o-1.13:
      stage: build
      script:
-          - bash builder.sh -t tagged -p cri-o -b release-1.13
+          - bash builder.sh -t scratch -p cri-o -b release-1.13
 
 cri-o-1.14:
      stage: build
      script:
-          - bash builder.sh -t tagged -p cri-o -b release-1.14
+          - bash builder.sh -t scratch -p cri-o -b release-1.14
 
 cri-o-1.15:
      stage: build
      script:
-          - bash builder.sh -t tagged -p cri-o -b release-1.15
+          - bash builder.sh -t scratch -p cri-o -b release-1.15

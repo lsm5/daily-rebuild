@@ -8,6 +8,7 @@ export DIST=$(rpm --eval %{?dist})
 export DISTRO="fedora"
 export DIST_PKG="fedpkg"
 export BUILDDEP="dnf builddep"
+export FEDORA_USER="lsm5"
 
 while getopts ":b:p:t:" opt; do
     case $opt in

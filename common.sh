@@ -1,10 +1,35 @@
 #!/bin/sh
 
-. env.sh
+. $(pwd)/env.sh
+
+# check stable pushes
+check_stable_push ()
+{
+   if [ BUILDTYPE = "tagged" ]; then
+      # Check if any new builds in updates-testing can be pushed to stable
+      export CURRENT_STABLE_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-modular $PACKAGE | awk '{print $1}')
+      export CURRENT_TESTING_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-modular-testing $PACKAGE | awk '{print $1}')
+      if [ $CURRENT_STABLE_BUILD != $CURRENT_TESTING_BUILD ]; then
+         # Try submitting testing build to stable
+         # Get Bodhi ID
+         export BODHI_ID=$(bodhi updates query --packages $PACKAGE --releases $DIST_GIT_TAG --status testing | grep 'Update ID' | sed -e 's/   Update ID: //')
+         bodhi updates request --user $FEDORA_USER --password $FEDORA_KRB_PASSWORD $BODHI_ID stable
+         if [ $? -ne 0 ]; then
+            echo "Build in updates-testing not qualified for stable push yet"
+         else
+         # Push CentOS build to -release branch since Fedora build qualified
+            export CURRENT_CENTOS_TESTING_BUILD=$(echo $CURRENT_TESTING_BUILD | sed -e "s/$KOJI_BUILD_SUFFIX/\.el7/")
+            cbs tag-pkg virt7-container-common-release $CURRENT_CENTOS_TESTING_BUILD
+         fi
+      fi
+   fi
+}
+
 
 # update spec changelog and release value
 bump_spec ()
 {
+   check_stable_push
    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
    if [ $CURRENT_VERSION == $VERSION ]; then
       echo "No new upstream release. Exiting..."
@@ -84,7 +109,8 @@ push_and_build ()
    fi
    cd $MODULE_DIR/$MODULE
    git checkout $DIST_GIT_TAG
-   git commit --allow-empty -asm 'autobuilt latest'
+   git commit --allow-empty -asm 'autobuilt v$VERSION'
    git push -u origin $DIST_GIT_TAG
    $DIST_PKG module-build
+   bodhi updates new --user $FEDORA_USER --password $FEDORA_KRB_PASSWORD $MODULE_BUILD_ID --type=bugfix --notes "Autobuilt v$VERSION" $MODULE_BUILD_ID
 }
