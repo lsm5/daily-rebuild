@@ -15,3 +15,8 @@ conmon:
      script:
         - PACKAGE=conmon bash autobuilder.sh
 
+containernetworking-plugins:
+     stage: build
+     script:
+        - PACKAGE=containernetworking-plugins bash autobuilder.sh
+

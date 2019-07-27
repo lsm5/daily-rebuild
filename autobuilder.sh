@@ -25,15 +25,15 @@ git fetch --all
 if [ $PACKAGE == "cri-o" ]; then
         # build latest release-* branch for cri-o
         export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
-        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
+        export SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
         # checkout branch with debian changes
         git checkout $VERSION_CODENAME-$BRANCH
 else
         export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
-        export VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
         export LATEST_COMMIT=$(git rev-parse $LATEST_TAG)
-        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
+        export SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
+        export VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
         # checkout branch with debian changes
         git checkout $VERSION_CODENAME 
 fi
