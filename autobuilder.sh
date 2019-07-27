@@ -32,6 +32,8 @@ if [ $PACKAGE == "cri-o" ]; then
 else
         export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
         export VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
+        export LATEST_COMMIT=$(git rev-parse $LATEST_TAG)
+        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
         # checkout branch with debian changes
         git checkout $VERSION_CODENAME 
 fi
@@ -61,9 +63,9 @@ if [[ $VERSION == $CURRENT_VERSION ]]; then
 else
         echo "Bumping changelog..."
         if [ $PACKAGE == cri-o ]; then
-                debchange --package "$PACKAGE-$BRANCH" -v "$VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
+                debchange --package "$PACKAGE-$BRANCH" -v "$VERSION-1~dev~git$SHORTCOMMIT~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
         else
-                debchange --package "$PACKAGE" -v "$VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
+                debchange --package "$PACKAGE" -v "$VERSION-1~git$SHORTCOMMIT~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
         fi
         git commit -asm "bump to $VERSION"
 fi
