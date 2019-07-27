@@ -10,6 +10,11 @@ before_script:
 stages:
      - build
 
+buildah:
+     stage: build
+     script:
+        - PACKAGE=buildah bash autobuilder.sh
+
 conmon:
      stage: build
      script:
@@ -19,6 +24,11 @@ containernetworking-plugins:
      stage: build
      script:
         - PACKAGE=containernetworking-plugins bash autobuilder.sh
+
+podman:
+     stage: build
+     script:
+        - PACKAGE=podman bash autobuilder.sh
 
 skopeo:
      stage: build
