@@ -7,8 +7,8 @@ check_stable_push ()
 {
    if [ BUILDTYPE = "tagged" ]; then
       # Check if any new builds in updates-testing can be pushed to stable
-      export CURRENT_STABLE_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-modular $PACKAGE | awk '{print $1}')
-      export CURRENT_TESTING_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-updates-modular-testing $PACKAGE | awk '{print $1}')
+      export CURRENT_STABLE_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-modular-updates $PACKAGE | awk '{print $1}')
+      export CURRENT_TESTING_BUILD=$(koji latest-pkg --quiet $DIST_GIT_TAG-modular-updates-testing $PACKAGE | awk '{print $1}')
       if [ $CURRENT_STABLE_BUILD != $CURRENT_TESTING_BUILD ]; then
          # Try submitting testing build to stable
          # Get Bodhi ID
