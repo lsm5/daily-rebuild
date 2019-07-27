@@ -22,7 +22,7 @@ echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --imp
 cd ~/repositories/$PACKAGE
 echo "Adding and fetching git upstream remote..."
 git fetch --all
-if [ $PACKAGE == "cri-o" ]; then
+if [[ $PACKAGE == "cri-o" ]]; then
         # build latest release-* branch for cri-o
         export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
         export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
@@ -39,7 +39,7 @@ else
 fi
 
 echo "Extracting current version/commit from deb package..."
-if [ $PACKAGE == "cri-o" ]; then
+if [[ $PACKAGE == "cri-o" ]]; then
    export CURRENT_COMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
 else
    export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
@@ -61,13 +61,13 @@ else
 fi
 
 echo "Bump changelog if new commits for cri-o or new version for others..."
-if [ $PACKAGE == "cri-o" ]; then
-   if [ $LATEST_COMMIT == $CURRENT_COMMIT ]; then
+if [[ $PACKAGE == "cri-o" ]]; then
+   if [[ $LATEST_COMMIT == $CURRENT_COMMIT ]]; then
       echo "No new upstream commits. Exiting..."
    else
       echo "Bumping changelog..."
-      if [ $LATEST_VERSION != $CURRENT_VERSION ]; then
-         debchange --package "$PACKAGE-$BRANCH" -v "$VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION, autobuilt $LATEST_SHORTCOMMIT"
+      if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
+         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION, autobuilt $LATEST_SHORTCOMMIT"
       else
          debchange --package "$PACKAGE-$BRANCH" -i -D $VERSION_CODENAME "autobuilt $LATEST_SHORTCOMMIT"
       fi
@@ -79,7 +79,7 @@ else
       exit 0
    else
       echo "Bumping changelog..."
-      debchange --package "$PACKAGE" -v "$VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
+      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
       git commit -asm "bump to $VERSION"
    fi
 fi
@@ -110,7 +110,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Pushing changes to gitlab/$PACKAGE..."
-if [ $PACKAGE == cri-o ]; then
+if [[ $PACKAGE == "cri-o" ]]; then
         GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u gitlab $VERSION_CODENAME-$BRANCH -f
 else
         GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u gitlab $VERSION_CODENAME -f
@@ -123,7 +123,7 @@ fi
 echo "Adding github mirror..."
 git remote add github github:lsm5/$PACKAGE.git
 echo "Pushing changes to github/$PACKAGE..."
-if [ $PACKAGE == cri-o ]; then
+if [[ $PACKAGE == "cri-o" ]]; then
         GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u github $VERSION_CODENAME-$BRANCH -f
 else
         GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u github $VERSION_CODENAME -f
