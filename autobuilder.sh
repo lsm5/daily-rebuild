@@ -25,21 +25,25 @@ git fetch --all
 if [ $PACKAGE == "cri-o" ]; then
         # build latest release-* branch for cri-o
         export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
-        export SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
-        export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
+        export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
+        export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
         # checkout branch with debian changes
         git checkout $VERSION_CODENAME-$BRANCH
 else
         export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
         export LATEST_COMMIT=$(git rev-parse $LATEST_TAG)
-        export SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
-        export VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
+        export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
+        export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
         # checkout branch with debian changes
         git checkout $VERSION_CODENAME 
 fi
 
-echo "Extracting current version from deb package..."
-export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
+echo "Extracting current version/commit from deb package..."
+if [ $PACKAGE == "cri-o" ]; then
+   export CURRENT_COMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
+else
+   export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
+fi
 
 # Rebase build repo on top of latest tag
 if [ $PACKAGE == "cri-o" ]; then
@@ -56,18 +60,28 @@ else
    fi
 fi
 
-echo "Checking versions..."
-if [[ $VERSION == $CURRENT_VERSION ]]; then
-        echo "No new upstream release. Exiting..."
-        exit 0
+echo "Bump changelog if new commits for cri-o or new version for others..."
+if [ $PACKAGE == "cri-o" ]; then
+   if [ $LATEST_COMMIT == $CURRENT_COMMIT ]; then
+      echo "No new upstream commits. Exiting..."
+   else
+      echo "Bumping changelog..."
+      if [ $LATEST_VERSION != $CURRENT_VERSION ]; then
+         debchange --package "$PACKAGE-$BRANCH" -v "$VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION, autobuilt $LATEST_SHORTCOMMIT"
+      else
+         debchange --package "$PACKAGE-$BRANCH" -i -D $VERSION_CODENAME "autobuilt $LATEST_SHORTCOMMIT"
+      fi
+      git commit -asm "bump to $VERSION"
+   fi
 else
-        echo "Bumping changelog..."
-        if [ $PACKAGE == cri-o ]; then
-                debchange --package "$PACKAGE-$BRANCH" -v "$VERSION-1~dev~git$SHORTCOMMIT~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
-        else
-                debchange --package "$PACKAGE" -v "$VERSION-1~git$SHORTCOMMIT~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
-        fi
-        git commit -asm "bump to $VERSION"
+   if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
+      echo "No new upstream release. Exiting..."
+      exit 0
+   else
+      echo "Bumping changelog..."
+      debchange --package "$PACKAGE" -v "$VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
+      git commit -asm "bump to $VERSION"
+   fi
 fi
 
 echo "Updating image and deps..."
@@ -94,7 +108,6 @@ if [ $? -ne 0 ]; then
         echo "Failed to sign changes file. Exiting..."
         exit 1
 fi
-
 
 echo "Pushing changes to gitlab/$PACKAGE..."
 if [ $PACKAGE == cri-o ]; then
