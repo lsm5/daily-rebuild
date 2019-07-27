@@ -20,3 +20,8 @@ containernetworking-plugins:
      script:
         - PACKAGE=containernetworking-plugins bash autobuilder.sh
 
+skopeo:
+     stage: build
+     script:
+        - PACKAGE=skopeo bash autobuilder.sh
+
