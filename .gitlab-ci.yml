@@ -1,0 +1,17 @@
+---
+image: registry.gitlab.com/lsm5/rpm-builder:bionic
+
+before_script:
+   - . /etc/os-release
+   - cd $HOME/repositories/rpm-builder
+   - git fetch --all
+   - git checkout origin/$VERSION_CODENAME
+
+stages:
+     - build
+
+conmon:
+     stage: build
+     script:
+        - PACKAGE=conmon bash autobuilder.sh
+
