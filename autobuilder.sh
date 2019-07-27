@@ -13,8 +13,8 @@ cd ~/.ssh
 openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
 echo "Set correct permissions for SSH priv key..."
 chmod 600 ~/.ssh/id_rsa
-echo "Importing GPG priv key..."
 
+echo "Importing GPG priv key..."
 cd ~
 openssl enc -aes-256-cbc -pbkdf2 -d -in lsm5-bot-privkey.enc -out lsm5-bot-privkey.asc -pass pass:$DECRYPTION_PASSPHRASE
 echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --import $(pwd)/lsm5-bot-privkey.asc
