@@ -24,6 +24,7 @@ echo "Adding and fetching git upstream remote..."
 git fetch --all
 if [[ $PACKAGE == "cri-o" ]]; then
         # build latest release-* branch for cri-o
+        git checkout origin/release-$BRANCH
         export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
         export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
         export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
@@ -67,11 +68,11 @@ if [[ $PACKAGE == "cri-o" ]]; then
    else
       echo "Bumping changelog..."
       if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
-         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION, autobuilt $LATEST_SHORTCOMMIT"
+         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
       else
          debchange --package "$PACKAGE-$BRANCH" -i -D $VERSION_CODENAME "autobuilt $LATEST_SHORTCOMMIT"
       fi
-      git commit -asm "bump to $VERSION"
+      git commit -asm "bump to $LATEST_VERSION"
    fi
 else
    if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
@@ -79,8 +80,8 @@ else
       exit 0
    else
       echo "Bumping changelog..."
-      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $VERSION"
-      git commit -asm "bump to $VERSION"
+      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_VERSION"
+      git commit -asm "bump to $LATEST_VERSION"
    fi
 fi
 
