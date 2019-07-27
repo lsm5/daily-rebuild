@@ -25,6 +25,21 @@ containernetworking-plugins:
      script:
         - PACKAGE=containernetworking-plugins bash autobuilder.sh
 
+cri-o-1.13:
+     stage: build
+     script:
+        - PACKAGE=cri-o BRANCH=1.13 bash autobuilder.sh
+
+cri-o-1.14:
+     stage: build
+     script:
+        - PACKAGE=cri-o BRANCH=1.14 bash autobuilder.sh
+
+cri-o-1.15:
+     stage: build
+     script:
+        - PACKAGE=cri-o BRANCH=1.15 bash autobuilder.sh
+
 podman:
      stage: build
      script:
