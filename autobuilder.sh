@@ -74,6 +74,9 @@ echo "Updating image and deps..."
 sudo apt -qq update
 sudo apt -qqy dist-upgrade
 
+echo "Installing dependencies..."
+sudo mk-build-deps -i
+
 echo "Building package..."
 debuild -i -us -uc -S -sa
 
