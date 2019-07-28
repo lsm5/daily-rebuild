@@ -36,6 +36,7 @@ if [[ $PACKAGE == "cri-o" ]]; then
    if [[ $LATEST_SHORTCOMMIT == $CURRENT_SHORTCOMMIT ]]; then
       #echo "No new upstream commits. Exiting..."
       #exit 0
+      echo "First build. Continuing..."
    else
       echo "Rebasing $VERSION_CODENAME-$BRANCH on top of commit $LATEST_SHORTCOMMIT for $PACKAGE..."
       git rebase $LATEST_COMMIT
@@ -61,6 +62,7 @@ else
    if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
       #echo "No new upstream release. Exiting..."
       #exit 0
+      echo "First build. Continuing..."
    else
       echo "Rebasing $VERSION_CODENAME on top of tag $LATEST_TAG for $PACKAGE..."
       git rebase $LATEST_TAG
