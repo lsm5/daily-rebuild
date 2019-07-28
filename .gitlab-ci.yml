@@ -25,6 +25,11 @@ containernetworking-plugins:
      script:
         - PACKAGE=containernetworking-plugins bash autobuilder.sh
 
+containers-golang:
+     stage: build
+     script:
+        - PACKAGE=containers-golang bash autobuilder.sh
+
 cri-o-1.13:
      stage: build
      script:
