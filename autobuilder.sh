@@ -22,51 +22,26 @@ echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --imp
 cd ~/repositories/$PACKAGE
 echo "Fetching git remotes..."
 git fetch --all
-if [[ $PACKAGE == "cri-o" ]]; then
-        echo "Getting info for latest release-$BRANCH for $PACKAGE..."
-        git checkout origin/release-$BRANCH
-        export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
-        export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
-        export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
-        echo "Checking out branch with debian changes..."
-        git checkout $VERSION_CODENAME-$BRANCH
-else
-        echo "Getting info for latest tag for $PACKAGE..."
-        export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
-        export LATEST_COMMIT=$(git rev-parse $LATEST_TAG)
-        export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
-        export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
-        echo "Checking out branch with debian changes..."
-        git checkout $VERSION_CODENAME 
-fi
-
-echo "Extracting current version/commit from deb package..."
-if [[ $PACKAGE == "cri-o" ]]; then
-   export CURRENT_COMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
-else
-   export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
-fi
 
 if [[ $PACKAGE == "cri-o" ]]; then
-   echo "Rebasing build repo on top of latest commit for $PACKAGE..."
-   git rebase $LATEST_COMMIT
-   if [ $? -ne 0 ]; then
-        echo "Rebase on commit $LATEST_COMMIT failed. Exiting..."
-        exit 1
-   fi
-else
-   echo "Rebasing build repo on top of latest tag for $PACKAGE..."
-   git rebase $LATEST_TAG
-   if [ $? -ne 0 ]; then
-        echo "Rebase on tag $LATEST_TAG failed. Exiting..."
-        exit 1
-   fi
-fi
-
-if [[ $PACKAGE == "cri-o" ]]; then
-   if [[ $LATEST_COMMIT == $CURRENT_COMMIT ]]; then
+   echo "Getting info for latest release-$BRANCH for $PACKAGE..."
+   git checkout origin/release-$BRANCH
+   export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
+   export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
+   export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
+   echo "Checking out branch with debian changes..."
+   git checkout $VERSION_CODENAME-$BRANCH
+   echo "Extracting current commit from deb package..."
+   export CURRENT_SHORTCOMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
+   if [[ $LATEST_SHORTCOMMIT == $CURRENT_SHORTCOMMIT ]]; then
       echo "No new upstream commits. Exiting..."
    else
+      echo "Rebasing $VERSION_CODENAME-$BRANCH on top of commit $LATEST_SHORTCOMMIT for $PACKAGE..."
+      git rebase $LATEST_COMMIT
+      if [ $? -ne 0 ]; then
+         echo "Rebase on commit $LATEST_SHORTCOMMIT failed. Exiting..."
+      exit 1
+      fi
       echo "Bumping changelog..."
       if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
          debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
@@ -76,10 +51,22 @@ if [[ $PACKAGE == "cri-o" ]]; then
       git commit -asm "bump to $LATEST_VERSION"
    fi
 else
+   echo "Getting info for latest tag for $PACKAGE..."
+   export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
+   export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
+   echo "Checking out branch with debian changes..."
+   git checkout $VERSION_CODENAME 
+   export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
    if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
       echo "No new upstream release. Exiting..."
       exit 0
    else
+      echo "Rebasing $VERSION_CODENAME on top of tag $LATEST_TAG for $PACKAGE..."
+      git rebase $LATEST_TAG
+      if [ $? -ne 0 ]; then
+         echo "Rebase on tag $LATEST_TAG failed. Exiting..."
+         exit 1
+      fi
       echo "Bumping changelog..."
       debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_VERSION"
       git commit -asm "bump to $LATEST_VERSION"
