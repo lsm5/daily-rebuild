@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Getting distro version variables from /etc/os-release..."
+# Get ubuntu version variables
 . /etc/os-release
 
 export NAME="Lokesh Mandvekar (Bot)"
@@ -10,15 +10,13 @@ export DEBFULLNAME=$NAME
 export DEBEMAIL=$EMAIL
 
 cd ~/.ssh
-echo "Decrypting ssh private key..."
 openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
-echo "Setting correct permissions for SSH priv key..."
+echo "Set correct permissions for SSH priv key..."
 chmod 600 ~/.ssh/id_rsa
 
+echo "Importing GPG priv key..."
 cd ~
-echo "Decrypting gpg private key..."
 openssl enc -aes-256-cbc -pbkdf2 -d -in lsm5-bot-privkey.enc -out lsm5-bot-privkey.asc -pass pass:$DECRYPTION_PASSPHRASE
-echo "Importing GPG private key..."
 echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --import $(pwd)/lsm5-bot-privkey.asc
 
 cd ~/repositories/$PACKAGE
@@ -30,8 +28,7 @@ if [[ $PACKAGE == "cri-o" ]]; then
    git checkout origin/release-$BRANCH
    export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
    export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
-   export LATEST_UPSTREAM_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' - e 's/"//')
-   export LATEST_VERSION=$(echo $LATEST_UPSTREAM_VERSION | sed -e 's/-.*//')
+   export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
    echo "Checking out branch with debian changes..."
    git checkout $VERSION_CODENAME-$BRANCH
    echo "Extracting current commit from deb package..."
@@ -49,7 +46,7 @@ if [[ $PACKAGE == "cri-o" ]]; then
       fi
       echo "Bumping changelog..."
       if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
-         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to v$LATEST_UPSTREAM_VERSION, autobuilt $LATEST_SHORTCOMMIT"
+         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
       else
          debchange --package "$PACKAGE-$BRANCH" -i -D $VERSION_CODENAME "autobuilt $LATEST_SHORTCOMMIT"
       fi
@@ -74,8 +71,8 @@ else
          exit 1
       fi
       echo "Bumping changelog..."
-      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_TAG"
-      git commit -asm "bump to $LATEST_TAG"
+      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$ID$VERSION_ID~ppa1" -D $VERSION_CODENAME "bump to $LATEST_VERSION"
+      git commit -asm "bump to $LATEST_VERSION"
    fi
 fi
 
