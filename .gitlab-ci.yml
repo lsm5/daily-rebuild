@@ -25,6 +25,11 @@ containernetworking-plugins:
      script:
         - PACKAGE=containernetworking-plugins bash autobuilder.sh
 
+cri-o-1.12:
+     stage: build
+     script:
+        - PACKAGE=cri-o BRANCH=1.12 bash autobuilder.sh
+
 cri-o-1.13:
      stage: build
      script:
@@ -49,4 +54,9 @@ skopeo:
      stage: build
      script:
         - PACKAGE=skopeo bash autobuilder.sh
+
+slirp4netns:
+     stage: build
+     script:
+        - PACKAGE=slirp4netns bash autobuilder.sh
 
