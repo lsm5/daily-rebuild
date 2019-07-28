@@ -35,12 +35,13 @@ if [[ $PACKAGE == "cri-o" ]]; then
    export CURRENT_SHORTCOMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
    if [[ $LATEST_SHORTCOMMIT == $CURRENT_SHORTCOMMIT ]]; then
       echo "No new upstream commits. Exiting..."
+      exit 0
    else
       echo "Rebasing $VERSION_CODENAME-$BRANCH on top of commit $LATEST_SHORTCOMMIT for $PACKAGE..."
       git rebase $LATEST_COMMIT
       if [ $? -ne 0 ]; then
          echo "Rebase on commit $LATEST_SHORTCOMMIT failed. Exiting..."
-      exit 1
+         exit 1
       fi
       echo "Bumping changelog..."
       if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
