@@ -20,22 +20,23 @@ openssl enc -aes-256-cbc -pbkdf2 -d -in lsm5-bot-privkey.enc -out lsm5-bot-privk
 echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --import $(pwd)/lsm5-bot-privkey.asc
 
 cd ~/repositories/$PACKAGE
-echo "Adding and fetching git upstream remote..."
+echo "Fetching git remotes..."
 git fetch --all
 if [[ $PACKAGE == "cri-o" ]]; then
-        # build latest release-* branch for cri-o
+        echo "Getting info for latest release-$BRANCH for $PACKAGE..."
         git checkout origin/release-$BRANCH
         export LATEST_COMMIT=$(git show --pretty=%H -s origin/release-$BRANCH)
         export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
         export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
-        # checkout branch with debian changes
+        echo "Checking out branch with debian changes..."
         git checkout $VERSION_CODENAME-$BRANCH
 else
+        echo "Getting info for latest tag for $PACKAGE..."
         export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
         export LATEST_COMMIT=$(git rev-parse $LATEST_TAG)
         export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
         export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
-        # checkout branch with debian changes
+        echo "Checking out branch with debian changes..."
         git checkout $VERSION_CODENAME 
 fi
 
@@ -46,14 +47,15 @@ else
    export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
 fi
 
-# Rebase build repo on top of latest tag
-if [ $PACKAGE == "cri-o" ]; then
+if [[ $PACKAGE == "cri-o" ]]; then
+   echo "Rebasing build repo on top of latest commit for $PACKAGE..."
    git rebase $LATEST_COMMIT
    if [ $? -ne 0 ]; then
         echo "Rebase on commit $LATEST_COMMIT failed. Exiting..."
         exit 1
    fi
 else
+   echo "Rebasing build repo on top of latest tag for $PACKAGE..."
    git rebase $LATEST_TAG
    if [ $? -ne 0 ]; then
         echo "Rebase on tag $LATEST_TAG failed. Exiting..."
@@ -61,7 +63,6 @@ else
    fi
 fi
 
-echo "Bump changelog if new commits for cri-o or new version for others..."
 if [[ $PACKAGE == "cri-o" ]]; then
    if [[ $LATEST_COMMIT == $CURRENT_COMMIT ]]; then
       echo "No new upstream commits. Exiting..."
@@ -89,8 +90,8 @@ echo "Updating image and deps..."
 sudo apt -qq update
 sudo apt -qqy dist-upgrade
 
-echo "Installing dependencies..."
-sudo mk-build-deps -i
+#echo "Installing dependencies..."
+#sudo mk-build-deps -i
 
 echo "Building package..."
 debuild -i -us -uc -S -sa
