@@ -34,9 +34,8 @@ if [[ $PACKAGE == "cri-o" ]]; then
    echo "Extracting current commit from deb package..."
    export CURRENT_SHORTCOMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
    if [[ $LATEST_SHORTCOMMIT == $CURRENT_SHORTCOMMIT ]]; then
-      #echo "No new upstream commits. Exiting..."
-      #exit 0
-      echo "First build. Continuing..."
+      echo "No new upstream commits. Exiting..."
+      exit 0
    else
       echo "Rebasing $VERSION_CODENAME-$BRANCH on top of commit $LATEST_SHORTCOMMIT for $PACKAGE..."
       git rebase $LATEST_COMMIT
@@ -60,9 +59,8 @@ else
    git checkout $VERSION_CODENAME 
    export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
    if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
-      #echo "No new upstream release. Exiting..."
-      #exit 0
-      echo "First build. Continuing..."
+      echo "No new upstream release. Exiting..."
+      exit 0
    else
       echo "Rebasing $VERSION_CODENAME on top of tag $LATEST_TAG for $PACKAGE..."
       git rebase $LATEST_TAG
