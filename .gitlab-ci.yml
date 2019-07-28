@@ -1,5 +1,5 @@
 ---
-image: registry.gitlab.com/lsm5/rpm-builder:bionic
+image: registry.gitlab.com/lsm5/rpm-builder:disco
 
 before_script:
    - . /etc/os-release
