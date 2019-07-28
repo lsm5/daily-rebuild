@@ -18,11 +18,6 @@ before_script:
 stages:
    - build
 
-cri-o-1.11:
-     stage: build
-     script:
-          - bash builder.sh -t scratch -p cri-o -b release-1.11
-
 cri-o-1.12:
      stage: build
      script:
