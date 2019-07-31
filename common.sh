@@ -60,30 +60,29 @@ bump_spec ()
          else
             echo "No change in spec's Version field..."
          fi
-      else
-         echo "Updating container..."
-         sudo dnf update --nogpgcheck -y
-         echo "Deleting previous tmp changelog files if any..."
-         if [[ -f /tmp/$PACKAGE.changelog ]]; then
-            rm -f /tmp/$PACKAGE.changelog
-         fi
-         echo "Recording upstream commit and tag to spec..."
-         sed -i "0,/\%global built_tag.*/{s/%global built_tag.*/\%global built_tag $LATEST_TAG/}" $PACKAGE.spec
-         sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
-         if [[ $PACKAGE == "container-selinux" ]]; then
-            sed -i "0,/\%global commit_centos.*/{s/\%global commit_centos.*/\%global commit_centos $COMMIT_CENTOS/}" $PACKAGE.spec
-            sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
-            echo "- autobuilt $SHORTCOMMIT for fedora" >> /tmp/$PACKAGE.changelog
-            echo "- autobuilt $SHORTCOMMIT_CENTOS for centos" >> /tmp/$PACKAGE.changelog
-         fi
-         sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-         sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
-         echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
       fi
-      echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-      rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
-    fi
-    popd
+      echo "Updating container..."
+      sudo dnf update --nogpgcheck -y
+      echo "Deleting previous tmp changelog files if any..."
+      if [[ -f /tmp/$PACKAGE.changelog ]]; then
+         rm -f /tmp/$PACKAGE.changelog
+      fi
+      echo "Recording upstream commit and tag to spec..."
+      sed -i "0,/\%global built_tag.*/{s/%global built_tag.*/\%global built_tag $LATEST_TAG/}" $PACKAGE.spec
+      sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
+      if [[ $PACKAGE == "container-selinux" ]]; then
+         sed -i "0,/\%global commit_centos.*/{s/\%global commit_centos.*/\%global commit_centos $COMMIT_CENTOS/}" $PACKAGE.spec
+         sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
+         echo "- autobuilt $SHORTCOMMIT for fedora" >> /tmp/$PACKAGE.changelog
+         echo "- autobuilt $SHORTCOMMIT_CENTOS for centos" >> /tmp/$PACKAGE.changelog
+      fi
+      sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
+      sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
+      echo "- bump to $LATEST_TAG" > /tmp/$PACKAGE.changelog
+   fi
+   echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+   rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
+   popd
 }
 
 # rpmbuild
