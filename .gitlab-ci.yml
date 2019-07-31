@@ -12,7 +12,7 @@ before_script:
      - mkdir -p ~/repositories/pkgs
      - cd ~/repositories/rpm-builder
      - git fetch --all
-     - git checkout f30
+     - git checkout fedora-release
      - git pull
 
 stages:
