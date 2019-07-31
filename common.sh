@@ -28,9 +28,11 @@ try_bodhi_updates ()
                echo "Build in updates-testing not qualified for stable push but isn't of type Security. Moving on..."
             fi
          else
-            echo "Pushing CentOS build to -release branch since Fedora build qualified..."
-            export CURRENT_CENTOS_TESTING_BUILD=$(echo $CURRENT_TESTING_BUILD | sed -e "s/$KOJI_BUILD_SUFFIX/\.el7/")
-            cbs tag-pkg virt7-container-common-release $CURRENT_CENTOS_TESTING_BUILD
+            if [[ $CHECK_CENTOS == "true" ]]; then
+               echo "Pushing CentOS build to -release branch since Fedora build qualified..."
+               export CURRENT_CENTOS_TESTING_BUILD=$(echo $CURRENT_TESTING_BUILD | sed -e "s/$KOJI_BUILD_SUFFIX/\.el7/")
+               cbs tag-pkg virt7-container-common-release $CURRENT_CENTOS_TESTING_BUILD
+            fi
          fi
       fi
       popd
@@ -124,13 +126,15 @@ push_and_build ()
     $DIST_PKG build
     echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt v$VERSION"
     rm -rf SRPMS/*
-    echo "Building for CentOS Virt SIG..."
-    rpmbuild -br --quiet --define='dist .el7' $PACKAGE.spec
-    echo "Removing epoch from NVR for centos builds..."
-    export CENTOS_NVR=$(echo $NVR | sed -e 's/[^:]*://')
-    cbs build --wait virt7-container-common-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
-    if [[ $? -ne 0 ]]; then
-       cbs tag-pkg virt7-container-common-testing $PACKAGE-$CENTOS_NVR.el7
+    if [[ $CHECK_CENTOS == "true" ]]; then
+       echo "Building for CentOS Virt SIG..."
+      rpmbuild -br --quiet --define='dist .el7' $PACKAGE.spec
+      echo "Removing epoch from NVR for centos builds..."
+      export CENTOS_NVR=$(echo $NVR | sed -e 's/[^:]*://')
+      cbs build --wait virt7-container-common-el7 SRPMS/$PACKAGE-$CENTOS_NVR.el7.src.rpm
+      if [[ $? -ne 0 ]]; then
+         cbs tag-pkg virt7-container-common-testing $PACKAGE-$CENTOS_NVR.el7
+      fi
     fi
     popd
 }

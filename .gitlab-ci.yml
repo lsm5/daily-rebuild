@@ -16,39 +16,75 @@ before_script:
      - git pull
 
 stages:
-     - build
+     - f30
+     - f29
 
-buildah:
-     stage: build
+buildah-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p buildah
+          - bash builder.sh -k f30 -t tagged -p buildah
 
-container-selinux:
-     stage: build
+container-selinux-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p container-selinux
+          - bash builder.sh -k f30 -t tagged -p container-selinux
 
-containernetworking-plugins:
-     stage: build
+containernetworking-plugins-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p containernetworking-plugins
+          - bash builder.sh -k f30 -t tagged -p containernetworking-plugins
 
-fuse-overlayfs:
-     stage: build
+fuse-overlayfs-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p fuse-overlayfs
+          - bash builder.sh -k f30 -t tagged -p fuse-overlayfs
 
-podman:
-     stage: build
+podman-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p podman
+          - bash builder.sh -k f30 -t tagged -p podman
 
-skopeo:
-     stage: build
+skopeo-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p skopeo
+          - bash builder.sh -k f30 -t tagged -p skopeo
 
-slirp4netns:
-     stage: build
+slirp4netns-f30:
+     stage: f30
      script:
-          - bash builder.sh -t tagged -p slirp4netns
+          - bash builder.sh -k f30 -t tagged -p slirp4netns
+
+buildah-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p buildah
+
+container-selinuxi-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p container-selinux
+
+containernetworking-plugins-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p containernetworking-plugins
+
+fuse-overlayfs-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p fuse-overlayfs
+
+podman-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p podman
+
+skopeo-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p skopeo
+
+slirp4netns-f29:
+     stage: f29
+     script:
+          - bash builder.sh -k f29 -t tagged -p slirp4netns
