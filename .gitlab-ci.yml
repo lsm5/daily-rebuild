@@ -15,76 +15,58 @@ before_script:
      - git checkout fedora-release
      - git pull
 
-stages:
-     - f30
-     - f29
-
 buildah-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p buildah
 
 container-selinux-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p container-selinux
 
 containernetworking-plugins-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p containernetworking-plugins
 
 fuse-overlayfs-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p fuse-overlayfs
 
 podman-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p podman
 
 skopeo-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p skopeo
 
 slirp4netns-f30:
-     stage: f30
      script:
           - bash builder.sh -k f30 -t tagged -p slirp4netns
 
 buildah-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p buildah
 
 container-selinuxi-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p container-selinux
 
 containernetworking-plugins-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p containernetworking-plugins
 
 fuse-overlayfs-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p fuse-overlayfs
 
 podman-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p podman
 
 skopeo-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p skopeo
 
 slirp4netns-f29:
-     stage: f29
      script:
           - bash builder.sh -k f29 -t tagged -p slirp4netns
