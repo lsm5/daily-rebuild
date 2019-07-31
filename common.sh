@@ -18,6 +18,9 @@ try_bodhi_updates ()
          bodhi updates query --updateid $BODHI_ID | grep 'Type: security'
          if [[ $? == 0 ]]; then
             export BODHI_UPDATE_TYPE="security"
+            echo "YUP, SECURITY UPDATE!!!"
+         else
+            echo "Nope, not a security update"
          fi
          bodhi updates request --user lsm5 --password $FEDORA_KRB_PASSWORD $BODHI_ID stable
          if [[ $? -ne 0 ]]; then
