@@ -78,6 +78,10 @@ skopeo-disco:
      script:
         - PACKAGE=skopeo DISTRO_VERSION=disco bash autobuilder.sh
 
+containernetworking-plugins-xenial:
+     script:
+        - PACKAGE=containernetworking-plugins DISTRO_VERSION=xenial bash autobuilder.sh
+
 containers-golang-xenial:
      script:
         - PACKAGE=containers-golang DISTRO_VERSION=xenial bash autobuilder.sh
