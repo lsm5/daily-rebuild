@@ -2,56 +2,79 @@
 image: registry.gitlab.com/lsm5/rpm-builder:disco
 
 before_script:
-   - . /etc/os-release
    - cd $HOME/repositories/rpm-builder
    - git fetch --all
-   - git checkout origin/$VERSION_CODENAME
+   - git checkout origin/ubuntu
 
-stages:
-     - build
-
-buildah:
-     stage: build
+buildah-bionic:
      script:
-        - PACKAGE=buildah bash autobuilder.sh
+        - PACKAGE=buildah DISTRO_VERSION=bionic bash autobuilder.sh
 
-conmon:
-     stage: build
+conmon-bionic:
      script:
-        - PACKAGE=conmon bash autobuilder.sh
+        - PACKAGE=conmon DISTRO_VERSION=bionic bash autobuilder.sh
 
-containernetworking-plugins:
-     stage: build
+containernetworking-plugins-bionic:
      script:
-        - PACKAGE=containernetworking-plugins bash autobuilder.sh
+        - PACKAGE=containernetworking-plugins DISTRO_VERSION=bionic bash autobuilder.sh
 
-containers-golang:
-     stage: build
+containers-golang-bionic:
      script:
-        - PACKAGE=containers-golang bash autobuilder.sh
+        - PACKAGE=containers-golang DISTRO_VERSION=bionic bash autobuilder.sh
 
-cri-o-1.13:
-     stage: build
+cri-o-1.13-bionic:
      script:
-        - PACKAGE=cri-o BRANCH=1.13 bash autobuilder.sh
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.13 bash autobuilder.sh
 
-cri-o-1.14:
-     stage: build
+cri-o-1.14-bionic:
      script:
-        - PACKAGE=cri-o BRANCH=1.14 bash autobuilder.sh
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.14 bash autobuilder.sh
 
-cri-o-1.15:
-     stage: build
+cri-o-1.15-bionic:
      script:
-        - PACKAGE=cri-o BRANCH=1.15 bash autobuilder.sh
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.15 bash autobuilder.sh
 
-podman:
-     stage: build
+podman-bionic:
      script:
-        - PACKAGE=podman bash autobuilder.sh
+        - PACKAGE=podman DISTRO_VERSION=bionic bash autobuilder.sh
 
-skopeo:
-     stage: build
+skopeo-bionic:
      script:
-        - PACKAGE=skopeo bash autobuilder.sh
+        - PACKAGE=skopeo DISTRO_VERSION=bionic bash autobuilder.sh
+
+buildah-disco:
+     script:
+        - PACKAGE=buildah DISTRO_VERSION=disco bash autobuilder.sh
+
+conmon-disco:
+     script:
+        - PACKAGE=conmon DISTRO_VERSION=disco bash autobuilder.sh
+
+containernetworking-plugins-disco:
+     script:
+        - PACKAGE=containernetworking-plugins DISTRO_VERSION=disco bash autobuilder.sh
+
+containers-golang-disco:
+     script:
+        - PACKAGE=containers-golang DISTRO_VERSION=disco bash autobuilder.sh
+
+cri-o-1.13-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.13 bash autobuilder.sh
+
+cri-o-1.14-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.14 bash autobuilder.sh
+
+cri-o-1.15-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.15 bash autobuilder.sh
+
+podman-disco:
+     script:
+        - PACKAGE=podman DISTRO_VERSION=disco bash autobuilder.sh
+
+skopeo-disco:
+     script:
+        - PACKAGE=skopeo DISTRO_VERSION=disco bash autobuilder.sh
 
