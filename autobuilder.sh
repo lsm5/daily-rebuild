@@ -53,7 +53,7 @@ if [[ $PACKAGE == "cri-o" ]]; then
       fi
       echo "Bumping changelog..."
       if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
-         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to $LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
+         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to v$LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
       else
          debchange --package "$PACKAGE-$BRANCH" -i -D $DISTRO_VERSION "autobuilt $LATEST_SHORTCOMMIT"
       fi
@@ -65,20 +65,22 @@ else
    export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
    echo "Checking out branch with debian changes..."
    git checkout $DISTRO_VERSION 
+   export DEB_PKG_TAG=$(grep UPSTREAM_TAG debian/rules | sed -e 's/UPSTREAM_TAG=//')
    export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
-   if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
+   if [[ $DEB_PKG_TAG == $LATEST_TAG ]]; then
       echo "No new upstream release. Exiting..."
       exit 0
    else
       echo "Rebasing $DISTRO_VERSION on top of tag $LATEST_TAG for $PACKAGE..."
       git rebase $LATEST_TAG
-      if [ $? -ne 0 ]; then
+      if [[ $? -ne 0 ]]; then
          echo "Rebase on tag $LATEST_TAG failed. Exiting..."
          exit 1
       fi
       echo "Bumping changelog..."
-      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to $LATEST_VERSION"
-      git commit -asm "bump to $LATEST_VERSION"
+      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to $LATEST_TAG"
+      sed -i "s/UPSTREAM_TAG=.*/UPSTREAM_TAG=$LATEST_TAG/" debian/rules
+      git commit -asm "bump to $LATEST_TAG"
    fi
 fi
 
