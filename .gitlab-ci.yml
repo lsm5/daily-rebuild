@@ -1,5 +1,5 @@
 ---
-image: registry.gitlab.com/lsm5/rpm-builder:disco
+image: registry.gitlab.com/lsm5/rpm-builder:ubuntu
 
 before_script:
    - cd $HOME/repositories/rpm-builder
