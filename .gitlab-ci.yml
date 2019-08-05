@@ -46,6 +46,10 @@ skopeo-bionic:
      script:
         - PACKAGE=skopeo DISTRO_VERSION=bionic bash autobuilder.sh
 
+slirp4netns-bionic:
+     script:
+        - PACKAGE=slirp4netns DISTRO_VERSION=bionic bash autobuilder.sh
+
 buildah-disco:
      script:
         - PACKAGE=buildah DISTRO_VERSION=disco bash autobuilder.sh
@@ -86,6 +90,10 @@ skopeo-disco:
      script:
         - PACKAGE=skopeo DISTRO_VERSION=disco bash autobuilder.sh
 
+slirp4netns-disco:
+     script:
+        - PACKAGE=slirp4netns DISTRO_VERSION=disco bash autobuilder.sh
+
 containernetworking-plugins-xenial:
      script:
         - PACKAGE=containernetworking-plugins DISTRO_VERSION=xenial bash autobuilder.sh
@@ -101,4 +109,8 @@ containers-image-xenial:
 skopeo-xenial:
      script:
         - PACKAGE=skopeo DISTRO_VERSION=xenial bash autobuilder.sh
+
+slirp4netns-xenial:
+     script:
+        - PACKAGE=slirp4netns DISTRO_VERSION=xenial bash autobuilder.sh
 
