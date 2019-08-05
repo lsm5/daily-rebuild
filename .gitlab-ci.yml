@@ -22,6 +22,10 @@ containers-golang-bionic:
      script:
         - PACKAGE=containers-golang DISTRO_VERSION=bionic bash autobuilder.sh
 
+containers-image-bionic:
+     script:
+        - PACKAGE=containers-image DISTRO_VERSION=bionic bash autobuilder.sh
+
 cri-o-1.13-bionic:
      script:
         - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.13 bash autobuilder.sh
@@ -58,6 +62,10 @@ containers-golang-disco:
      script:
         - PACKAGE=containers-golang DISTRO_VERSION=disco bash autobuilder.sh
 
+containers-image-disco:
+     script:
+        - PACKAGE=containers-image DISTRO_VERSION=disco bash autobuilder.sh
+
 cri-o-1.13-disco:
      script:
         - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.13 bash autobuilder.sh
@@ -85,4 +93,12 @@ containernetworking-plugins-xenial:
 containers-golang-xenial:
      script:
         - PACKAGE=containers-golang DISTRO_VERSION=xenial bash autobuilder.sh
+
+containers-image-xenial:
+     script:
+        - PACKAGE=containers-image DISTRO_VERSION=xenial bash autobuilder.sh
+
+skopeo-xenial:
+     script:
+        - PACKAGE=skopeo DISTRO_VERSION=xenial bash autobuilder.sh
 
