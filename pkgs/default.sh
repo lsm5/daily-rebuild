@@ -9,7 +9,7 @@ fetch_version_and_commit ()
     git fetch origin
     git checkout origin/master
     if [ $PACKAGE == container-selinux ]; then
-       export VERSION=$(grep policy_module container.te | cut -b 26- | sed -e 's/)//')
+       export LATEST_VERSION=$(grep policy_module container.te | cut -b 26- | sed -e 's/)//')
        export COMMIT=$(git show --pretty=%H -s origin/master)
        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
        export COMMIT_CENTOS=$(git show --pretty=%H -s origin/RHEL7.5)
@@ -17,7 +17,7 @@ fetch_version_and_commit ()
     else
        export LATEST_TAG=$(git describe --tags --abbrev=0)
        git checkout $LATEST_TAG
-       export VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
+       export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
        export COMMIT=$(git rev-parse HEAD)
        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
     fi

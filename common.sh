@@ -53,7 +53,7 @@ bump_spec ()
       echo "No new upstream tag. Exiting..."
       exit 0
    else
-      if [[ $CURRENT_VERSION == $VERSION ]]; then
+      if [[ $CURRENT_VERSION == $LATEST_VERSION ]]; then
          if [[ $PACKAGE == "container-selinux" ]]; then
             echo "No new upstream version. Exiting..."
             exit 0
@@ -70,18 +70,22 @@ bump_spec ()
       echo "Recording upstream commit and tag to spec..."
       sed -i "0,/\%global built_tag.*/{s/%global built_tag.*/\%global built_tag $LATEST_TAG/}" $PACKAGE.spec
       sed -i "0,/\%global commit0.*/{s/\%global commit0.*/\%global commit0 $COMMIT/}" $PACKAGE.spec
-      if [[ $PACKAGE == "container-selinux" ]]; then
-         sed -i "0,/\%global commit_centos.*/{s/\%global commit_centos.*/\%global commit_centos $COMMIT_CENTOS/}" $PACKAGE.spec
-         sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
-         echo "- autobuilt $SHORTCOMMIT for fedora" >> /tmp/$PACKAGE.changelog
-         echo "- autobuilt $SHORTCOMMIT_CENTOS for centos" >> /tmp/$PACKAGE.changelog
+      if [[ $CURRENT_VERSION != $LATEST_VERSION ]]; then
+         if [[ $PACKAGE == "container-selinux" ]]; then
+            sed -i "0,/\%global commit_centos.*/{s/\%global commit_centos.*/\%global commit_centos $COMMIT_CENTOS/}" $PACKAGE.spec
+            sed -i "0,/\%global commit0.*/! {0,/\%global commit0.*/ s/\%global commit0.*/\%global commit0 $COMMIT_CENTOS/}" $PACKAGE.spec
+            echo "- bump to v$LATEST_VERSION" >> /tmp/$PACKAGE.changelog
+            echo "- autobuilt $SHORTCOMMIT for fedora" >> /tmp/$PACKAGE.changelog
+            echo "- autobuilt $SHORTCOMMIT_CENTOS for centos" >> /tmp/$PACKAGE.changelog
+         else
+            echo "- bump to $LATEST_TAG" >> /tmp/$PACKAGE.changelog
+            echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
+         fi
+         sed -i "s/Version: [0-9.]*/Version: $LATEST_VERSION/" $PACKAGE.spec
+         sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
       fi
-      sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
-      sed -i "s/Release: [0-9]*/Release: 1/" $PACKAGE.spec
-      echo "- bump to $LATEST_TAG" > /tmp/$PACKAGE.changelog
+      rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
    fi
-   echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
-   rpmdev-bumpspec -c "$(cat /tmp/$PACKAGE.changelog)" $PACKAGE.spec
    popd
 }
 
@@ -126,7 +130,7 @@ push_and_build ()
         exit 1
     fi
     $DIST_PKG build
-    echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt v$VERSION"
+    echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt $LATEST_TAG"
     rm -rf SRPMS/*
     if [[ $CHECK_CENTOS == "true" ]]; then
        echo "Building for CentOS Virt SIG..."
