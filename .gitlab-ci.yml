@@ -10,105 +10,121 @@ buildah-bionic:
      script:
         - PACKAGE=buildah DISTRO_VERSION=bionic bash autobuilder.sh
 
-conmon-bionic:
-     script:
-        - PACKAGE=conmon DISTRO_VERSION=bionic bash autobuilder.sh
-
-containernetworking-plugins-bionic:
-     script:
-        - PACKAGE=containernetworking-plugins DISTRO_VERSION=bionic bash autobuilder.sh
-
-containers-golang-bionic:
-     script:
-        - PACKAGE=containers-golang DISTRO_VERSION=bionic bash autobuilder.sh
-
-containers-image-bionic:
-     script:
-        - PACKAGE=containers-image DISTRO_VERSION=bionic bash autobuilder.sh
-
-cri-o-1.13-bionic:
-     script:
-        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.13 bash autobuilder.sh
-
-cri-o-1.14-bionic:
-     script:
-        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.14 bash autobuilder.sh
-
-cri-o-1.15-bionic:
-     script:
-        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.15 bash autobuilder.sh
-
-podman-bionic:
-     script:
-        - PACKAGE=podman DISTRO_VERSION=bionic bash autobuilder.sh
-
-skopeo-bionic:
-     script:
-        - PACKAGE=skopeo DISTRO_VERSION=bionic bash autobuilder.sh
-
-slirp4netns-bionic:
-     script:
-        - PACKAGE=slirp4netns DISTRO_VERSION=bionic bash autobuilder.sh
-
 buildah-disco:
      script:
         - PACKAGE=buildah DISTRO_VERSION=disco bash autobuilder.sh
+
+buildah-xenial:
+     script:
+        - PACKAGE=buildah DISTRO_VERSION=xenial bash autobuilder.sh
+
+conmon-bionic:
+     script:
+        - PACKAGE=conmon DISTRO_VERSION=bionic bash autobuilder.sh
 
 conmon-disco:
      script:
         - PACKAGE=conmon DISTRO_VERSION=disco bash autobuilder.sh
 
+conmon-xenial:
+     script:
+        - PACKAGE=conmon DISTRO_VERSION=xenial bash autobuilder.sh
+
+containernetworking-plugins-bionic:
+     script:
+        - PACKAGE=containernetworking-plugins DISTRO_VERSION=bionic bash autobuilder.sh
+
 containernetworking-plugins-disco:
      script:
         - PACKAGE=containernetworking-plugins DISTRO_VERSION=disco bash autobuilder.sh
-
-containers-golang-disco:
-     script:
-        - PACKAGE=containers-golang DISTRO_VERSION=disco bash autobuilder.sh
-
-containers-image-disco:
-     script:
-        - PACKAGE=containers-image DISTRO_VERSION=disco bash autobuilder.sh
-
-cri-o-1.13-disco:
-     script:
-        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.13 bash autobuilder.sh
-
-cri-o-1.14-disco:
-     script:
-        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.14 bash autobuilder.sh
-
-cri-o-1.15-disco:
-     script:
-        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.15 bash autobuilder.sh
-
-podman-disco:
-     script:
-        - PACKAGE=podman DISTRO_VERSION=disco bash autobuilder.sh
-
-skopeo-disco:
-     script:
-        - PACKAGE=skopeo DISTRO_VERSION=disco bash autobuilder.sh
-
-slirp4netns-disco:
-     script:
-        - PACKAGE=slirp4netns DISTRO_VERSION=disco bash autobuilder.sh
 
 containernetworking-plugins-xenial:
      script:
         - PACKAGE=containernetworking-plugins DISTRO_VERSION=xenial bash autobuilder.sh
 
+containers-golang-bionic:
+     script:
+        - PACKAGE=containers-golang DISTRO_VERSION=bionic bash autobuilder.sh
+
+containers-golang-disco:
+     script:
+        - PACKAGE=containers-golang DISTRO_VERSION=disco bash autobuilder.sh
+
 containers-golang-xenial:
      script:
         - PACKAGE=containers-golang DISTRO_VERSION=xenial bash autobuilder.sh
+
+containers-image-bionic:
+     script:
+        - PACKAGE=containers-image DISTRO_VERSION=bionic bash autobuilder.sh
+
+containers-image-disco:
+     script:
+        - PACKAGE=containers-image DISTRO_VERSION=disco bash autobuilder.sh
 
 containers-image-xenial:
      script:
         - PACKAGE=containers-image DISTRO_VERSION=xenial bash autobuilder.sh
 
+cri-o-1.13-bionic:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.13 bash autobuilder.sh
+
+cri-o-1.13-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.13 bash autobuilder.sh
+
+cri-o-1.14-bionic:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.14 bash autobuilder.sh
+
+cri-o-1.14-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.14 bash autobuilder.sh
+
+cri-o-1.14-xenial:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=xenial BRANCH=1.14 bash autobuilder.sh
+
+cri-o-1.15-bionic:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.15 bash autobuilder.sh
+
+cri-o-1.15-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.15 bash autobuilder.sh
+
+cri-o-1.15-xenial:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=xenial BRANCH=1.15 bash autobuilder.sh
+
+podman-bionic:
+     script:
+        - PACKAGE=podman DISTRO_VERSION=bionic bash autobuilder.sh
+
+podman-disco:
+     script:
+        - PACKAGE=podman DISTRO_VERSION=disco bash autobuilder.sh
+
+skopeo-bionic:
+     script:
+        - PACKAGE=skopeo DISTRO_VERSION=bionic bash autobuilder.sh
+
+skopeo-disco:
+     script:
+        - PACKAGE=skopeo DISTRO_VERSION=disco bash autobuilder.sh
+
 skopeo-xenial:
      script:
         - PACKAGE=skopeo DISTRO_VERSION=xenial bash autobuilder.sh
+
+slirp4netns-bionic:
+     script:
+        - PACKAGE=slirp4netns DISTRO_VERSION=bionic bash autobuilder.sh
+
+slirp4netns-disco:
+     script:
+        - PACKAGE=slirp4netns DISTRO_VERSION=disco bash autobuilder.sh
 
 slirp4netns-xenial:
      script:
