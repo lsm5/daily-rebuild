@@ -40,24 +40,26 @@ if [[ $PACKAGE == "cri-o" ]]; then
    echo "Checking out branch with debian changes..."
    git checkout $DISTRO_VERSION-$BRANCH
    echo "Extracting current commit from deb package..."
-   export CURRENT_SHORTCOMMIT=$(dpkg-parsechangelog -c 1 | grep built | sed -e 's/.*built //')
-   if [[ $LATEST_SHORTCOMMIT == $CURRENT_SHORTCOMMIT ]]; then
+   export CURRENT_COMMIT=$(grep UPSTREAM_COMMIT debian/rules | sed -e 's/UPSTREAM_COMMIT=//')
+   if [[ $CURRENT_COMMIT == $LATEST_COMMIT ]]; then
       echo "No new upstream commits. Exiting..."
       exit 0
    else
       echo "Rebasing $DISTRO_VERSION-$BRANCH on top of commit $LATEST_SHORTCOMMIT for $PACKAGE..."
       git rebase $LATEST_COMMIT
-      if [ $? -ne 0 ]; then
+      if [[ $? -ne 0 ]]; then
          echo "Rebase on commit $LATEST_SHORTCOMMIT failed. Exiting..."
          exit 1
-      fi
-      echo "Bumping changelog..."
-      if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
-         debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to v$LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
       else
-         debchange --package "$PACKAGE-$BRANCH" -i -D $DISTRO_VERSION "autobuilt $LATEST_SHORTCOMMIT"
+         sed -i "s/UPSTREAM_COMMIT=.*/UPSTREAM_COMMIT=$LATEST_COMMIT/" debian/rules
+         echo "Bumping changelog..."
+         if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
+            debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to v$LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
+         else
+            debchange --package "$PACKAGE-$BRANCH" -i -D $DISTRO_VERSION "autobuilt $LATEST_SHORTCOMMIT"
+         fi
+         git commit -asm "bump to $LATEST_VERSION"
       fi
-      git commit -asm "bump to $LATEST_VERSION"
    fi
 else
    echo "Getting info for latest tag for $PACKAGE..."
