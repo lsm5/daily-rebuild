@@ -55,10 +55,11 @@ if [[ $PACKAGE == "cri-o" ]]; then
          echo "Bumping changelog..."
          if [[ $LATEST_VERSION != $CURRENT_VERSION ]]; then
             debchange --package "$PACKAGE-$BRANCH" -v "$LATEST_VERSION-1~dev~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to v$LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
+            git commit -asm "bump to $LATEST_VERSION, autobuilt $LATEST_SHORTCOMMIT"
          else
             debchange --package "$PACKAGE-$BRANCH" -i -D $DISTRO_VERSION "autobuilt $LATEST_SHORTCOMMIT"
+            git commit -asm "autobuilt $LATEST_SHORTCOMMIT"
          fi
-         git commit -asm "bump to $LATEST_VERSION"
       fi
    fi
 else
