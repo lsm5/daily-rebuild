@@ -66,6 +66,18 @@ containers-image-xenial:
      script:
         - PACKAGE=containers-image DISTRO_VERSION=xenial bash autobuilder.sh
 
+cri-o-1.12-bionic:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.12 bash autobuilder.sh
+
+cri-o-1.12-disco:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.12 bash autobuilder.sh
+
+cri-o-1.12-xenial:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=xenial BRANCH=1.12 bash autobuilder.sh
+
 cri-o-1.13-bionic:
      script:
         - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.13 bash autobuilder.sh
