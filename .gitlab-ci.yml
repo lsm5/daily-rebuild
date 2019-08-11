@@ -102,6 +102,18 @@ cri-o-1.15-xenial:
      script:
         - PACKAGE=cri-o DISTRO_VERSION=xenial BRANCH=1.15 bash autobuilder.sh
 
+libvarlink-bionic:
+     script:
+        - PACKAGE=libvarlink DISTRO_VERSION=bionic bash autobuilder.sh
+
+libvarlink-disco:
+     script:
+        - PACKAGE=libvarlink DISTRO_VERSION=disco bash autobuilder.sh
+
+libvarlink-xenial:
+     script:
+        - PACKAGE=libvarlink DISTRO_VERSION=xenial bash autobuilder.sh
+
 podman-bionic:
      script:
         - PACKAGE=podman DISTRO_VERSION=bionic bash autobuilder.sh
