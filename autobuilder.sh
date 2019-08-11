@@ -81,7 +81,11 @@ else
          exit 1
       fi
       echo "Bumping changelog..."
-      debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to $LATEST_TAG"
+      if [[ $CURRENT_VERSION == $LATEST_VERSION ]]; then
+         debchange --package "$PACKAGE" -i -D $DISTRO_VERSION "autobuilt $LATEST_TAG"
+      else
+         debchange --package "$PACKAGE" -v "$LATEST_VERSION-1~$DISTRO$DISTRO_VERSION_ID~ppa1" -D $DISTRO_VERSION "bump to $LATEST_TAG"
+      fi
       sed -i "s/UPSTREAM_TAG=.*/UPSTREAM_TAG=$LATEST_TAG/" debian/rules
       git commit -asm "bump to $LATEST_TAG"
    fi

@@ -74,6 +74,10 @@ cri-o-1.13-disco:
      script:
         - PACKAGE=cri-o DISTRO_VERSION=disco BRANCH=1.13 bash autobuilder.sh
 
+cri-o-1.13-xenial:
+     script:
+        - PACKAGE=cri-o DISTRO_VERSION=xenial BRANCH=1.13 bash autobuilder.sh
+
 cri-o-1.14-bionic:
      script:
         - PACKAGE=cri-o DISTRO_VERSION=bionic BRANCH=1.14 bash autobuilder.sh
