@@ -41,6 +41,7 @@ if [[ $PACKAGE == "cri-o" ]]; then
    git checkout $DISTRO_VERSION-$BRANCH
    echo "Extracting current commit from deb package..."
    export CURRENT_COMMIT=$(grep UPSTREAM_COMMIT debian/rules | sed -e 's/UPSTREAM_COMMIT=//')
+   export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
    if [[ $CURRENT_COMMIT == $LATEST_COMMIT && $FORCE_REBUILD != "true" ]]; then
       echo "No new upstream commits. Exiting..."
       exit 0
