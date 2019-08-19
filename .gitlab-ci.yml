@@ -15,58 +15,87 @@ before_script:
      - git checkout fedora-release
      - git pull
 
+buildah-f29:
+     script:
+          - bash builder.sh -k f29 -t tagged -p buildah
+
 buildah-f30:
      script:
           - bash builder.sh -k f30 -t tagged -p buildah
 
-container-selinux-f30:
+buildah-f31:
      script:
-          - bash builder.sh -k f30 -t tagged -p container-selinux
-
-containernetworking-plugins-f30:
-     script:
-          - bash builder.sh -k f30 -t tagged -p containernetworking-plugins
-
-fuse-overlayfs-f30:
-     script:
-          - bash builder.sh -k f30 -t tagged -p fuse-overlayfs
-
-podman-f30:
-     script:
-          - bash builder.sh -k f30 -t tagged -p podman
-
-skopeo-f30:
-     script:
-          - bash builder.sh -k f30 -t tagged -p skopeo
-
-slirp4netns-f30:
-     script:
-          - bash builder.sh -k f30 -t tagged -p slirp4netns
-
-buildah-f29:
-     script:
-          - bash builder.sh -k f29 -t tagged -p buildah
+          - bash builder.sh -k f31 -t tagged -p buildah
 
 container-selinuxi-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p container-selinux
 
+container-selinux-f30:
+     script:
+          - bash builder.sh -k f30 -t tagged -p container-selinux
+
+container-selinux-f31:
+     script:
+          - bash builder.sh -k f31 -t tagged -p container-selinux
+
 containernetworking-plugins-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p containernetworking-plugins
+
+containernetworking-plugins-f30:
+     script:
+          - bash builder.sh -k f30 -t tagged -p containernetworking-plugins
+
+containernetworking-plugins-f31:
+     script:
+          - bash builder.sh -k f31 -t tagged -p containernetworking-plugins
 
 fuse-overlayfs-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p fuse-overlayfs
 
+fuse-overlayfs-f30:
+     script:
+          - bash builder.sh -k f30 -t tagged -p fuse-overlayfs
+
+fuse-overlayfs-f31:
+     script:
+          - bash builder.sh -k f31 -t tagged -p fuse-overlayfs
+
 podman-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p podman
+
+podman-f30:
+     script:
+          - bash builder.sh -k f30 -t tagged -p podman
+
+podman-f31:
+     script:
+          - bash builder.sh -k f31 -t tagged -p podman
 
 skopeo-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p skopeo
 
+skopeo-f30:
+     script:
+          - bash builder.sh -k f30 -t tagged -p skopeo
+
+skopeo-f31:
+     script:
+          - bash builder.sh -k f31 -t tagged -p skopeo
+
 slirp4netns-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p slirp4netns
+
+slirp4netns-f30:
+     script:
+          - bash builder.sh -k f30 -t tagged -p slirp4netns
+
+slirp4netns-f31:
+     script:
+          - bash builder.sh -k f31 -t tagged -p slirp4netns
+

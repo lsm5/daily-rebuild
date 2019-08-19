@@ -49,6 +49,11 @@ bump_spec ()
    pushd $PKG_DIR/$PACKAGE
    export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
    export CURRENT_TAG=$(grep 'global built_tag' $PACKAGE.spec | sed -e 's/.*tag //')
+   VERSION_COMP=$(awk -vx=$CURRENT_VERSION -vy=$LATEST_VERSION 'BEGIN{ print x>=y?1:0 }')
+   if [[ $VERSION_COMP -eq 1 ]]; then
+      echo "Packaged version isn't released yet. Exiting..."
+      exit 0
+   fi
    if [[ $CURRENT_TAG == $LATEST_TAG && $PACKAGE != "container-selinux" ]]; then
       echo "No new upstream tag. Exiting..."
       exit 0
