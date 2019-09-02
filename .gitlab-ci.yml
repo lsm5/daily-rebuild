@@ -126,17 +126,17 @@ libvarlink-xenial:
      script:
         - PACKAGE=libvarlink DISTRO_VERSION=xenial bash autobuilder.sh
 
-          #podman-bionic:
-          #script:
-          #- PACKAGE=podman DISTRO_VERSION=bionic bash autobuilder.sh
+podman-bionic:
+     script:
+        - PACKAGE=podman DISTRO_VERSION=bionic bash autobuilder.sh
 
-          #podman-disco:
-          #script:
-          #- PACKAGE=podman DISTRO_VERSION=disco bash autobuilder.sh
+podman-disco:
+     script:
+        - PACKAGE=podman DISTRO_VERSION=disco bash autobuilder.sh
 
-          #podman-xenial:
-          #script:
-          #- PACKAGE=podman DISTRO_VERSION=xenial bash autobuilder.sh
+podman-xenial:
+     script:
+        - PACKAGE=podman DISTRO_VERSION=xenial bash autobuilder.sh
 
 skopeo-bionic:
      script:
