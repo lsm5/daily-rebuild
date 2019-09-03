@@ -24,9 +24,7 @@ while getopts ":b:p:t:" opt; do
     esac
 done
 
-if [[ $UPSTREAM_BRANCH == release-1.11 ]]; then
-   export DIST_GIT_TAG=1.11
-elif [[ $UPSTREAM_BRANCH == release-1.12 ]]; then
+if [[ $UPSTREAM_BRANCH == release-1.12 ]]; then
    export DIST_GIT_TAG=1.12
 elif [[ $UPSTREAM_BRANCH == release-1.13 ]]; then
    export DIST_GIT_TAG=1.13

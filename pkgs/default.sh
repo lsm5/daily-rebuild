@@ -9,7 +9,7 @@ fetch_version_and_commit ()
        git fetch origin
        git checkout origin/$UPSTREAM_BRANCH
        export LATEST_TAG=$(git describe --tags --abbrev=0)
-       export VERSION=$(echo $LATEST_TAG | sed -e 's/v//')
+       export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//')
        export COMMIT=$(git show --pretty=%H -s $(echo $LATEST_TAG))
        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
        popd
