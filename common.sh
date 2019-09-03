@@ -7,18 +7,20 @@ bump_spec ()
 {
     pushd $PKG_DIR/$PACKAGE
     export CURRENT_COMMIT=$(grep '\%global commit0' $PACKAGE.spec | sed -e 's/\%global commit0 //')
-    if [ $COMMIT == $CURRENT_COMMIT ]; then
+    if [[ $COMMIT == $CURRENT_COMMIT ]]; then
        echo "No change upstream since last build. Exiting..."
        exit 0
     else
        sudo dnf update --nogpgcheck -y
+       echo "Updating built_tag macro, doesn't affect rawhide, but for correctness sake..."
+       sed -i "0,/\%global built_tag.*/{s/%global built_tag.*/\%global built_tag $LATEST_TAG/}" $PACKAGE.spec
        sed -i "s/\%global commit0.*/\%global commit0 $COMMIT/" $PACKAGE.spec
        export CURRENT_VERSION=$(cat $PACKAGE.spec | grep -m 1 "Version:" | sed -e "s/Version: //")
-       # cleanup previous /tmp changelog entries
-       if [ -f /tmp/$PACKAGE.changelog ]; then
+       echo "Cleaning up previous /tmp changelog entries..."
+       if [[ -f /tmp/$PACKAGE.changelog ]]; then
           rm -f /tmp/$PACKAGE.changelog
        fi
-       if [ $CURRENT_VERSION != $VERSION ]; then
+       if [[ $CURRENT_VERSION != $VERSION ]]; then
           echo "- bump to $VERSION" > /tmp/$PACKAGE.changelog
           echo "- autobuilt $SHORTCOMMIT" >> /tmp/$PACKAGE.changelog
           sed -i "s/Version: [0-9.]*/Version: $VERSION/" $PACKAGE.spec
@@ -42,7 +44,7 @@ bump_spec ()
 fetch_pkg_and_build ()
 {
    pushd $PKG_DIR
-   if [ ! -d $PACKAGE ]; then
+   if [[ ! -d $PACKAGE ]]; then
       $DIST_PKG clone $PACKAGE
    fi
    pushd $PKG_DIR/$PACKAGE
@@ -51,7 +53,7 @@ fetch_pkg_and_build ()
    spectool -g $PACKAGE.spec
    sudo $BUILDDEP $PACKAGE.spec -y
    rpmbuild -br --quiet $PACKAGE.spec
-   if [ $? -ne 0 ]; then
+   if [[ $? -ne 0 ]]; then
        echo "rpm build FAIL!!!"
        exit 1
    fi
@@ -74,7 +76,7 @@ push_and_build ()
     pushd $PKG_DIR/$PACKAGE
     git push -u origin $DIST_GIT_TAG
     git status
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         echo "git push FAIL!!!"
         exit 1
     fi

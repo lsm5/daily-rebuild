@@ -13,23 +13,29 @@ fetch_version_and_commit ()
     # buildah
     if [ $PACKAGE == buildah ]; then
         export VERSION=$(grep 'Version =' buildah.go | sed -e 's/\tVersion = //' -e 's/"//g' -e 's/-.*//')
-    # container-selinux  
-    elif [ $PACKAGE == container-selinux ]; then
-        export VERSION=$(grep policy_module container.te | cut -b 26- | sed -e 's/)//')
+        export LATEST_TAG=$(git describe --tags --abbrev=0)
     # containernetworking-plugins
     elif [ $PACKAGE == containernetworking-plugins ]; then
         export VERSION=$(git describe --abbrev=0 --tags | sed -s 's/v//')
+        export LATEST_TAG=$(git describe --tags --abbrev=0)
     # fuse-overlayfs
     elif [ $PACKAGE == fuse-overlayfs ]; then
         export VERSION=$(grep 'AC_INIT' configure.ac | cut -b 28- | sed -e 's/].*//')
+        export LATEST_TAG=$(git describe --tags --abbrev=0)
     # runc    
     elif [ $PACKAGE == runc ]; then
         export VERSION=$(cat VERSION | sed -e 's/-.*//')
+        export LATEST_TAG=$(git describe --tags --abbrev=0)
     # slirp4netns    
     elif [ $PACKAGE == slirp4netns ]; then
         export VERSION=$(grep AC_INIT configure.ac | cut -b 25- | sed -e 's/+dev.*//' -e 's/-.*//' )
+        export LATEST_TAG=$(git describe --tags --abbrev=0)
+    # container-selinux  
+    elif [ $PACKAGE == container-selinux ]; then
+        export VERSION=$(grep policy_module container.te | cut -b 26- | sed -e 's/)//')
     else
         export VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
+        export LATEST_TAG=$(git describe --tags --abbrev=0)
     fi
     popd
 }
