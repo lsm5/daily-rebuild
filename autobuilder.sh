@@ -38,7 +38,7 @@ if [[ $PACKAGE == "cri-o" ]]; then
    export LATEST_SHORTCOMMIT=$(c=$LATEST_COMMIT; echo ${c:0:7})
    export LATEST_VERSION=$(grep 'const Version' version/version.go | sed -e 's/const Version = "//' -e 's/-.*//')
    echo "Checking out branch with debian changes..."
-   git checkout $DISTRO_VERSION-$BRANCH
+   git checkout gitlab/$DISTRO_VERSION-$BRANCH -b $DISTRO_VERSION-$BRANCH
    echo "Extracting current commit from deb package..."
    export CURRENT_COMMIT=$(grep UPSTREAM_COMMIT debian/rules | sed -e 's/UPSTREAM_COMMIT=//')
    export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
@@ -68,7 +68,7 @@ else
    export LATEST_TAG=$(git describe --tags --abbrev=0 origin/master)
    export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
    echo "Checking out branch with debian changes..."
-   git checkout $DISTRO_VERSION 
+   git checkout gitlab/$DISTRO_VERSION -b $DISTRO_VERSION
    export DEB_PKG_TAG=$(grep UPSTREAM_TAG debian/rules | sed -e 's/UPSTREAM_TAG=//')
    export CURRENT_VERSION=$(dpkg-parsechangelog --show-field Version | sed -e 's/-.*//')
    if [[ $DEB_PKG_TAG == $LATEST_TAG && $FORCE_REBUILD != "true" ]]; then
