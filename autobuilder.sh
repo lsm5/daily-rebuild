@@ -1,8 +1,8 @@
 #!/bin/sh
 
-export NAME="Lokesh Mandvekar (Bot)"
-export EMAIL="lsm5+bot@fedoraproject.org"
-export USER="lsm5+bot"
+export NAME="RH Container Bot"
+export EMAIL="rh.container.bot@gmail.com"
+export USER="rh-container-bot"
 export DEBFULLNAME=$NAME
 export DEBEMAIL=$EMAIL
 
@@ -16,16 +16,19 @@ elif [[ $DISTRO_VERSION == "disco" ]]; then
    export DISTRO_VERSION_ID="19.04"
 fi
 
-
 cd ~/.ssh
-openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
+#openssl enc -aes-256-cbc -pbkdf2 -d -in id_rsa.enc -out id_rsa -pass pass:$DECRYPTION_PASSPHRASE
+#chmod 600 id_rsa
+openssl enc -aes-256-cbc -pbkdf2 -d -in rh-container-bot_rsa.enc -out rh-container-bot_rsa -pass pass:$DECRYPTION_PASSPHRASE
 echo "Set correct permissions for SSH priv key..."
-chmod 600 ~/.ssh/id_rsa
+chmod 600 rh-container-bot_rsa
 
 echo "Importing GPG priv key..."
 cd ~
-openssl enc -aes-256-cbc -pbkdf2 -d -in lsm5-bot-privkey.enc -out lsm5-bot-privkey.asc -pass pass:$DECRYPTION_PASSPHRASE
-echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --import $(pwd)/lsm5-bot-privkey.asc
+#openssl enc -aes-256-cbc -pbkdf2 -d -in lsm5-bot-privkey.enc -out lsm5-bot-privkey.asc -pass pass:$DECRYPTION_PASSPHRASE
+#echo $GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --import $(pwd)/lsm5-bot-privkey.asc
+openssl enc -aes-256-cbc -pbkdf2 -d -in rh-container-bot-privkey.enc -out rh-container-bot-privkey.asc -pass pass:$DECRYPTION_PASSPHRASE
+echo $RH_BOT_GPG_KEY_PASSPHRASE | gpg --passphrase-fd 0 --allow-secret-key-import --import $(pwd)/rh-container-bot-privkey.asc
 
 cd ~/repositories/$PACKAGE
 echo "Fetching git remotes..."
@@ -103,14 +106,14 @@ echo "Building package..."
 debuild -i -us -uc -S -sa
 
 echo "Signing deb package..."
-echo "Y" | debsign -e"$DEBFULLNAME <$DEBEMAIL>" -p"gpg --yes -q --passphrase $GPG_KEY_PASSPHRASE --batch"\
+echo "Y" | debsign -e"$DEBFULLNAME <$DEBEMAIL>" -p"gpg --yes -q --passphrase $RH_BOT_GPG_KEY_PASSPHRASE --batch"\
         ../*.dsc
 if [ $? -ne 0 ]; then
         echo "Failed to sign dsc file. Exiting..."
         exit 1
 fi
 
-echo "Y" | debsign -e"$DEBFULLNAME <$DEBEMAIL>" -p"gpg --yes -q --passphrase $GPG_KEY_PASSPHRASE --batch"\
+echo "Y" | debsign -e"$DEBFULLNAME <$DEBEMAIL>" -p"gpg --yes -q --passphrase $RH_BOT_GPG_KEY_PASSPHRASE --batch"\
         ../*_source.changes
 if [ $? -ne 0 ]; then
         echo "Failed to sign changes file. Exiting..."
@@ -119,9 +122,9 @@ fi
 
 echo "Pushing changes to gitlab/$PACKAGE..."
 if [[ $PACKAGE == "cri-o" ]]; then
-        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u gitlab $DISTRO_VERSION-$BRANCH -f
+        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/rh-container-bot_rsa" git push -u gitlab $DISTRO_VERSION-$BRANCH -f
 else
-        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u gitlab $DISTRO_VERSION -f
+        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/rh-container-bot_rsa" git push -u gitlab $DISTRO_VERSION -f
 fi
 if [ $? -ne 0 ]; then
         echo "Failed to push changes to gitlab. Exiting..."
@@ -132,9 +135,9 @@ echo "Adding github mirror..."
 git remote add github github:lsm5/$PACKAGE.git
 echo "Pushing changes to github/$PACKAGE..."
 if [[ $PACKAGE == "cri-o" ]]; then
-        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u github $DISTRO_VERSION-$BRANCH -f
+        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/rh-container-bot_rsa" git push -u github $DISTRO_VERSION-$BRANCH -f
 else
-        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_rsa" git push -u github $DISTRO_VERSION -f
+        GIT_SSH_COMMAND="ssh -i $HOME/.ssh/rh-container-bot_rsa" git push -u github $DISTRO_VERSION -f
 fi
 if [ $? -ne 0 ]; then
         echo "Failed to push changes to github, not critical. Continuing..."
