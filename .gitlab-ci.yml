@@ -27,7 +27,7 @@ buildah-f31:
      script:
           - bash builder.sh -k f31 -t tagged -p buildah
 
-container-selinuxi-f29:
+container-selinux-f29:
      script:
           - bash builder.sh -k f29 -t tagged -p container-selinux
 
