@@ -135,7 +135,9 @@ push_and_build ()
         exit 1
     fi
     $DIST_PKG build
-    echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt $LATEST_TAG"
+    if [[ $DO_BODHI -eq 1 ]]; then
+       echo $FEDORA_KRB_PASSWORD | $DIST_PKG update --type=bugfix --notes "Autobuilt $LATEST_TAG"
+    fi
     rm -rf SRPMS/*
     if [[ $CHECK_CENTOS == "true" ]]; then
        echo "Building for CentOS Virt SIG..."

@@ -17,6 +17,12 @@ fetch_version_and_commit ()
     else
        export LATEST_TAG=$(git describe --tags --abbrev=0)
        git checkout $LATEST_TAG
+       echo $LATEST_TAG | grep '\-rc'
+       if [[ $? -eq 0 ]]; then
+          export DO_BODHI=0
+       else
+          export DO_BODHI=1
+       fi
        export LATEST_VERSION=$(echo $LATEST_TAG | sed -e 's/v//' -e 's/-.*//')
        export COMMIT=$(git rev-parse HEAD)
        export SHORTCOMMIT=$(c=$COMMIT; echo ${c:0:7})
